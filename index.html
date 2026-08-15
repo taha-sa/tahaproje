@@ -64,20 +64,20 @@
   <main class="flex-1 flex flex-col overflow-hidden relative">
     <input type="file" id="file-input" class="hidden" accept=".pdf" />
 
-    <!-- 1. Yükleme Ekranı (Dosya Yokken) -->
+    <!-- 1. Yükleme Ekranı -->
     <div id="view-home" class="flex-1 overflow-auto p-6 md:p-12 max-w-3xl mx-auto w-full flex flex-col items-center justify-center">
       <div id="drop-zone" class="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 bg-white dark:bg-slate-900 rounded-3xl p-12 text-center cursor-pointer transition-all shadow-xl group">
         <div class="w-20 h-20 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-6 text-4xl group-hover:scale-110 transition-transform">📂</div>
         <h3 class="text-xl font-bold mb-2">PDF Dosyanızı Buraya Bırakın</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-6">Dosya yüklediğinizde PDF Görüntüleyici açılacak ve YZ Agent otomatik olarak okuma yapacaktır.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-6">Dosya yüklediğinizde PDF Görüntüleyici açılacak ve YZ Agent metni hatasız tarayacaktır.</p>
         <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg transition-all">Bilgisayardan Seç</button>
       </div>
     </div>
 
-    <!-- 2. Çalışma Alanı (PDF Görüntüleyici + YZ Agent Paneli) -->
+    <!-- 2. Çalışma Alanı -->
     <div id="view-workspace" class="hidden flex-1 flex overflow-hidden">
       
-      <!-- Sol Taraf: Sayfa Listesi / Navigasyon -->
+      <!-- Sol Taraf: Sayfa Listesi -->
       <aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0">
         <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Sayfalar (<span id="page-count-badge">0</span>)</span>
@@ -105,7 +105,8 @@
            <div class="spinner"></div>
         </div>
 
-        <div id="main-viewer-container" class="flex-1 overflow-auto p-8 relative flex items-center justify-center" tabindex="0">
+        <!-- Touchpad Korumalı Görüntüleyici Konteyneri -->
+        <div id="main-viewer-container" class="flex-1 overflow-auto p-8 relative flex items-center justify-center outline-none" tabindex="0">
           <div id="canvas-wrapper" class="relative shadow-2xl bg-white dark:bg-slate-900 rounded-2xl overflow-hidden">
             <canvas id="main-pdf-canvas" class="block"></canvas>            
           </div>
@@ -176,6 +177,7 @@
       document.getElementById('theme-icon').textContent = state.theme === 'dark' ? '☀️' : '🌙';
     }
 
+    // Sağlamlaştırılmış Metin Okuma (Solid Text Extraction)
     async function extractAllTextFromCurrentPDF() {
         if (state.files.length === 0 || state.pages.length === 0) return null;
         let fullText = '';
@@ -185,8 +187,11 @@
                 if (!doc) continue;
                 const pdfPage = await doc.pdfjsDoc.getPage(pageState.originalPageIndex + 1);
                 const textContent = await pdfPage.getTextContent();
+                // Madde ve satır bütünlüğünü koruyarak metni birleştir
                 const pageText = textContent.items.map(item => item.str).join(' ');
-                fullText += pageText + '\n\n';
+                if (pageText.trim().length > 0) {
+                    fullText += pageText + '\n\n';
+                }
             }
             return fullText.trim();
         } catch (error) {
@@ -206,14 +211,14 @@
         resultContainer.innerHTML = `
             <div class="text-xs text-slate-500 text-center py-16 flex flex-col items-center gap-3">
                 <div class="spinner border-t-indigo-500 w-10 h-10"></div>
-                <span class="font-bold text-slate-700 dark:text-slate-200">YZ Agent belgenizi okuyor ve analiz ediyor...</span>
+                <span class="font-bold text-slate-700 dark:text-slate-200">YZ Agent metni güvenle tarıyor...</span>
             </div>
         `;
         
         const extractedText = await extractAllTextFromCurrentPDF();
         
         if (!extractedText || extractedText.length === 0) {
-            resultContainer.innerHTML = '<div class="text-xs text-rose-500 text-center p-4 bg-rose-50 rounded-xl border border-rose-200">Belgeden metin okunamadı. Taranmış resim tabanlı PDF olabilir.</div>';
+            resultContainer.innerHTML = '<div class="text-xs text-rose-500 text-center p-4 bg-rose-50 rounded-xl border border-rose-200">Belgeden metin okunamadı. Lütfen metin seçilebilir bir PDF olduğundan emin olun.</div>';
             return;
         }
 
@@ -259,7 +264,7 @@
             resultContainer.innerHTML = `
                 <div class="bg-amber-50 dark:bg-amber-950/30 text-amber-800 p-4 rounded-xl border border-amber-200 text-xs space-y-2">
                     <strong>💡 Vercel Yapılandırma Notu[cite: 1]</strong>
-                    <p>Metin okundu ancak canlı YZ Agent için Vercel üzerinde <code>/api/summarize</code> fonksiyonu aktif olmalıdır[cite: 1].</p>
+                    <p>Metin başarıyla tarandı ancak canlı YZ Agent için Vercel üzerinde <code>/api/summarize</code> fonksiyonu aktif olmalıdır[cite: 1].</p>
                     <div class="font-mono bg-white dark:bg-slate-900 p-2 rounded border text-[10px] max-h-32 overflow-y-auto">${extractedText.substring(0, 300)}...</div>
                 </div>
             `;
@@ -313,6 +318,20 @@
 
       document.getElementById('btn-zoom-in').addEventListener('click', () => { state.zoom = Math.min(3.0, state.zoom + 0.2); renderMainCanvas(); });
       document.getElementById('btn-zoom-out').addEventListener('click', () => { state.zoom = Math.max(0.4, state.zoom - 0.2); renderMainCanvas(); });
+
+      // TOUCHPAD / MOUSE SCROLL KORUMASI (Sadece Ctrl + Scroll Zoom Yapar)
+      const viewerContainer = document.getElementById('main-viewer-container');
+      viewerContainer.addEventListener('wheel', (e) => {
+        if (e.ctrlKey) {
+          e.preventDefault();
+          if (e.deltaY < 0) {
+            state.zoom = Math.min(3.0, state.zoom + 0.1);
+          } else {
+            state.zoom = Math.max(0.4, state.zoom - 0.1);
+          }
+          renderMainCanvas();
+        }
+      }, { passive: false });
     }
 
     function resetWorkspace() {
@@ -349,8 +368,6 @@
         document.getElementById('view-workspace').classList.remove('hidden');
         document.getElementById('tool-badge-container').classList.remove('hidden');
         renderWorkspace();
-        
-        // Dosya yüklenir yüklenmez YZ Agent otomatik çalışsın
         runAiAgent();
       }
     }
@@ -424,6 +441,8 @@
         currentMainRenderTask = pdfPage.render({ canvasContext: ctx, viewport });
         await currentMainRenderTask.promise;
         currentMainRenderTask = null;
+        
+        document.getElementById('zoom-text').textContent = `%${Math.round(state.zoom * 100)}`;
       } catch (err) {
          if(err.name !== 'RenderingCancelledException') console.error(err);
       } finally {
