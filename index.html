@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Utility Pro & AI Studio</title>
+  <title>PDF AI Agent & Viewer</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -26,247 +26,106 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(107, 114, 128, 0.7); }
-    
-    .drag-ghost { opacity: 0.4; transform: scale(0.95); border-style: dashed !important; border-color: #6366f1 !important; }
-    .drop-target-above { border-top: 4px solid #4f46e5 !important; }
-    .drop-target-below { border-bottom: 4px solid #4f46e5 !important; }
-    
-    .crop-handle { width: 10px; height: 10px; background-color: #4f46e5; border: 1.5px solid #ffffff; position: absolute; border-radius: 2px; z-index: 30; }
-    
-    .cursor-grab { cursor: grab !important; }
-    .cursor-grabbing { cursor: grabbing !important; }
-    
-    .dropdown-content { display: none; }
-    .dropdown-group.active .dropdown-content { display: block; }
-    
     .spinner { border: 3px solid rgba(99, 102, 241, 0.2); border-top-color: #4f46e5; border-radius: 50%; width: 32px; height: 32px; animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white overflow-hidden">
 
+  <!-- Header -->
   <header class="min-h-[4rem] py-2 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-4 md:px-6 flex items-center justify-between flex-wrap gap-3 shrink-0 z-50 relative">
     <div class="flex items-center gap-4">
       <div class="flex items-center gap-3 cursor-pointer" id="btn-home-logo">
         <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-indigo-500/20 shrink-0">📄</div>
         <div>
-          <h1 class="font-bold text-base tracking-tight leading-none">PDF Utility Pro</h1>
-          <span class="text-xs text-slate-500 dark:text-slate-400">Gemini 3.7 Flash AI Studio</span>
-        </div>
-      </div>
-      
-      <div class="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1"></div>
-      <div class="relative dropdown-group z-50 hidden md:block" id="pdf-tools-dropdown">
-        <button id="btn-pdf-tools" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-          🛠️ PDF Araçları <span class="text-[10px]">▼</span>
-        </button>
-        <div class="dropdown-content absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-xl p-2 max-h-[80vh] overflow-y-auto">
-          <div id="header-tools-menu"></div>
+          <h1 class="font-bold text-base tracking-tight leading-none">PDF AI Agent Studio</h1>
+          <span class="text-xs text-slate-500 dark:text-slate-400">Gemini 3.7 Flash Agent</span>
         </div>
       </div>
     </div>
 
-    <div id="tool-badge-container" class="hidden flex items-center gap-2 md:gap-3 bg-slate-100 dark:bg-slate-800/60 p-1.5 rounded-xl flex-wrap transition-all">
-      <button id="btn-back-home" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-        <span>⬅️</span> <span class="hidden md:inline">Ana Sayfa</span>
-      </button>
-      <span id="tool-badge-title" class="text-sm font-semibold px-2 md:px-3 text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5"></span>
+    <div id="tool-badge-container" class="hidden flex items-center gap-2 bg-slate-100 dark:bg-slate-800/60 p-1.5 rounded-xl">
+      <button id="btn-back-home" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 transition-colors">⬅️ Dosya Değiştir</button>
+      <span id="file-name-badge" class="text-xs font-semibold px-3 text-indigo-600 dark:text-indigo-400 truncate max-w-xs">belge.pdf</span>
     </div>
 
     <div class="flex items-center gap-2 ml-auto">
-      <button id="btn-toggle-ai" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-md shadow-indigo-600/20 hover:bg-indigo-700 transition-all border border-indigo-500">
-        ✨ AI Akıllı Özet
+      <button id="btn-toggle-ai" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-700 transition-all border border-indigo-500">
+        🤖 YZ Agent Paneli
       </button>
       <div class="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1"></div>
-      <button id="btn-theme-toggle" class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Tema Değiştir">
+      <button id="btn-theme-toggle" class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
         <span id="theme-icon">🌙</span>
       </button>
     </div>
   </header>
 
+  <!-- Main View Area -->
   <main class="flex-1 flex flex-col overflow-hidden relative">
-    <input type="file" id="file-input" class="hidden" multiple />
+    <input type="file" id="file-input" class="hidden" accept=".pdf" />
 
-    <div id="view-home" class="flex-1 overflow-auto p-4 md:p-8 max-w-7xl mx-auto w-full flex flex-col gap-6 md:gap-8">
-      <div id="drop-zone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 bg-white dark:bg-slate-900 rounded-2xl p-8 md:p-10 text-center cursor-pointer transition-all group shadow-sm hover:shadow-md">
-        <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-3xl group-hover:scale-105 transition-transform">📂</div>
-        <h3 class="text-lg font-semibold mb-1">PDF veya Görsel dosyalarınızı buraya bırakın</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">Dosyaları ortadan yükleyebilir, dilediğiniz gibi düzenleyebilir ve yapay zeka ile anında özetletebilirsiniz[cite: 1].</p>
-      </div>
-      <div class="flex flex-wrap items-center gap-2 md:gap-3 border-b border-slate-200 dark:border-slate-800 pb-4" id="category-tabs"></div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 pb-8" id="tools-grid"></div>
-    </div>
-
-    <div id="view-empty-tool" class="hidden flex-1 flex items-center justify-center p-8">
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center max-w-md w-full shadow-lg">
-        <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-3xl">📥</div>
-        <h3 id="empty-tool-title" class="text-lg font-bold mb-2">Dosya Yükleyin</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Devam etmek için bilgisayarınızdan dosya seçin.</p>
-        <button id="btn-empty-upload" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md transition-colors">Dosya Seç</button>
+    <!-- 1. Yükleme Ekranı (Dosya Yokken) -->
+    <div id="view-home" class="flex-1 overflow-auto p-6 md:p-12 max-w-3xl mx-auto w-full flex flex-col items-center justify-center">
+      <div id="drop-zone" class="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 bg-white dark:bg-slate-900 rounded-3xl p-12 text-center cursor-pointer transition-all shadow-xl group">
+        <div class="w-20 h-20 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-6 text-4xl group-hover:scale-110 transition-transform">📂</div>
+        <h3 class="text-xl font-bold mb-2">PDF Dosyanızı Buraya Bırakın</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-6">Dosya yüklediğinizde PDF Görüntüleyici açılacak ve YZ Agent otomatik olarak okuma yapacaktır.</p>
+        <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg transition-all">Bilgisayardan Seç</button>
       </div>
     </div>
 
+    <!-- 2. Çalışma Alanı (PDF Görüntüleyici + YZ Agent Paneli) -->
     <div id="view-workspace" class="hidden flex-1 flex overflow-hidden">
       
-      <aside id="left-sidebar" class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0 relative z-20">
+      <!-- Sol Taraf: Sayfa Listesi / Navigasyon -->
+      <aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0">
         <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Sayfalar (<span id="page-count-badge">0</span>)</span>
-          <div class="flex items-center gap-3">
-            <button id="btn-clear-workspace" class="text-xs text-rose-600 dark:text-rose-400 font-semibold hover:underline flex items-center gap-1" title="Tümünü Temizle">🗑️ Temizle</button>
-            <button id="btn-add-more-files" class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1">➕ Ekle</button>
-          </div>
+          <button id="btn-clear-workspace" class="text-xs text-rose-600 font-semibold hover:underline">🗑️ Sıfırla</button>
         </div>
         <div id="thumbnail-list" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
       </aside>
 
-      <div class="flex-1 flex flex-col overflow-hidden bg-slate-100 dark:bg-slate-950 relative z-10">
-        
-        <div class="h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 md:px-6 flex items-center justify-between shrink-0 z-20 overflow-x-auto whitespace-nowrap gap-4">
-          
-          <div class="flex items-center gap-3">
-            <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
-              <button id="btn-tool-select" class="px-2.5 py-1.5 bg-white dark:bg-slate-700 shadow-sm rounded text-xs font-semibold" title="Seçim Aracı">👆 Seç</button>
-              <button id="btn-tool-pan" class="px-2.5 py-1.5 hover:bg-white dark:hover:bg-slate-700 rounded text-xs text-slate-600 dark:text-slate-300 font-semibold" title="Kaydırma (El) Aracı">✋ Kaydır</button>
-            </div>
-            
-            <div class="h-4 w-px bg-slate-200 dark:border-slate-700"></div>
-
-            <div class="flex items-center gap-1">
-              <button id="btn-zoom-out" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm font-bold" title="Uzaklaştır (Ctrl+Scroll)">🔍-</button>
-              <span id="zoom-text" class="text-xs font-semibold w-12 text-center text-slate-700 dark:text-slate-200">%78</span>
-              <button id="btn-zoom-in" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm font-bold" title="Yakınlaştır (Ctrl+Scroll)">🔍+</button>
-              <button id="btn-toggle-fit" class="ml-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 transition-colors">Sığdır</button>
-            </div>
+      <!-- Orta Taraf: PDF Görüntüleyici -->
+      <div class="flex-1 flex flex-col overflow-hidden bg-slate-100 dark:bg-slate-950 relative">
+        <div class="h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 flex items-center justify-between shrink-0 z-20">
+          <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            <button id="btn-prev-page" class="px-3 py-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-xs font-bold">◀ Önceki</button>
+            <span id="page-nav-indicator" class="px-3 text-xs font-mono font-semibold">1 / 1</span>
+            <button id="btn-next-page" class="px-3 py-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-xs font-bold">Sonraki ▶</button>
           </div>
-
-          <div class="flex items-center gap-3">
-            <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
-              <button id="btn-prev-page" class="px-2 py-1 rounded hover:bg-white dark:hover:bg-slate-700 text-xs font-bold flex items-center gap-1" title="Önceki Sayfa">◀ <span class="hidden xl:inline">Önceki</span></button>
-              <span id="page-nav-indicator" class="px-3 text-xs font-mono font-semibold text-slate-600 dark:text-slate-300">1 / 1</span>
-              <button id="btn-next-page" class="px-2 py-1 rounded hover:bg-white dark:hover:bg-slate-700 text-xs font-bold flex items-center gap-1" title="Sonraki Sayfa"><span class="hidden xl:inline">Sonraki</span> ▶</button>
-            </div>
-            <div class="h-4 w-px bg-slate-200 dark:border-slate-800"></div>
-            <div id="action-buttons-container" class="flex items-center gap-2"></div>
+          <div class="flex items-center gap-2">
+            <button id="btn-zoom-out" class="px-3 py-1.5 bg-white dark:bg-slate-800 border rounded-lg text-xs font-bold">🔍 -</button>
+            <span id="zoom-text" class="text-xs font-semibold w-12 text-center">%78</span>
+            <button id="btn-zoom-in" class="px-3 py-1.5 bg-white dark:bg-slate-800 border rounded-lg text-xs font-bold">🔍 +</button>
           </div>
         </div>
-
-        <div id="floating-text-bar" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-30 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-2 shadow-xl flex items-center gap-3">
-          <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 px-2">📝 Metin Araçları</span>
-          <div class="h-4 w-px bg-slate-200 dark:bg-slate-800"></div>
-          <button id="btn-add-text-box" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold">➕ Yeni Metin</button>
-          <select id="text-size-select" class="text-xs bg-slate-100 dark:bg-slate-800 border rounded px-2 py-1"><option value="12">12 px</option><option value="16" selected>16 px</option><option value="24">24 px</option><option value="32">32 px</option></select>
-          <input type="color" id="text-color-picker" value="#000000" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent" />
-          <button id="btn-delete-active-text" class="p-1.5 hover:bg-rose-100 text-rose-600 rounded-lg text-xs" title="Seçili Metni Sil">🗑️</button>
-        </div>
-
-        <div id="floating-crop-bar" class="hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 rounded-full px-3 py-2 shadow-lg flex items-center gap-2 transition-all">
-          <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 pl-2 pr-1 flex items-center gap-1.5 select-none tracking-tight">✂️ Kırp</span>
-          <div class="h-4 w-px bg-slate-200 dark:bg-slate-700"></div>
-          <select id="crop-ratio-select" class="text-[11px] bg-slate-100 dark:bg-slate-800 border-0 rounded-full px-2.5 py-1 font-medium cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:ring-1 focus:ring-indigo-500 outline-none text-center appearance-none">
-            <option value="free">Serbest</option>
-            <option value="1.414">A4</option>
-            <option value="1.777">16:9</option>
-            <option value="1">1:1 Kare</option>
-          </select>
-          <span id="crop-dim-badge" class="text-[10px] font-mono bg-slate-50 dark:bg-slate-950/50 px-2 py-1 rounded-full text-slate-500 dark:text-slate-400 select-none">0x0 px</span>
-          <div class="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-0.5"></div>
-          <button id="btn-reset-crop-selection" class="px-2.5 py-1 bg-transparent hover:bg-rose-50 dark:hover:bg-rose-900/30 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 text-[11px] rounded-full font-semibold transition-colors">Sıfırla</button>
-          <button id="btn-apply-crop-single" class="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-800 text-[11px] rounded-full font-bold transition-colors">Sayfaya Uygula</button>
-          <button id="btn-apply-crop-all" class="px-3 py-1 bg-indigo-600 text-white hover:bg-indigo-700 text-[11px] rounded-full font-bold shadow-sm transition-all active:scale-95">Tümüne Uygula</button>
-        </div>
-
-        <div id="specialized-tool-panel" class="hidden border-b border-slate-200 dark:border-slate-800 bg-indigo-50/50 dark:bg-indigo-950/20 px-6 py-3 flex items-center justify-between text-xs z-20"></div>
 
         <div id="canvas-loader" class="hidden absolute inset-0 bg-slate-100/60 dark:bg-slate-950/60 backdrop-blur-[2px] z-40 flex items-center justify-center">
-           <div class="flex flex-col items-center gap-3">
-              <div class="spinner"></div>
-              <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Sayfa Hazırlanıyor...</span>
-           </div>
+           <div class="spinner"></div>
         </div>
 
-        <div id="main-viewer-container" class="flex-1 overflow-auto p-8 relative bg-slate-100 dark:bg-slate-950 select-none outline-none" tabindex="0">
-          <div id="canvas-wrapper" class="relative shadow-2xl bg-white dark:bg-slate-900 rounded-lg m-auto transition-transform origin-top-left" style="width: fit-content; min-width: min-content;">
-            <canvas id="main-pdf-canvas" class="block rounded-lg"></canvas>            
-            <div id="crop-overlay" class="hidden absolute border-2 border-indigo-500 bg-indigo-500/15 z-20 cursor-move">
-              <div class="crop-handle -top-1.5 -left-1.5 cursor-nwse-resize" data-handle="tl"></div>
-              <div class="crop-handle -top-1.5 -right-1.5 cursor-nesw-resize" data-handle="tr"></div>
-              <div class="crop-handle -bottom-1.5 -left-1.5 cursor-nesw-resize" data-handle="bl"></div>
-              <div class="crop-handle -bottom-1.5 -right-1.5 cursor-nesw-resize" data-handle="br"></div>
-              <div class="crop-handle top-1/2 -left-1.5 -translate-y-1/2 cursor-ew-resize" data-handle="l"></div>
-              <div class="crop-handle top-1/2 -right-1.5 -translate-y-1/2 cursor-ew-resize" data-handle="r"></div>
-              <div class="crop-handle -top-1.5 left-1/2 -translate-x-1/2 cursor-ns-resize" data-handle="t"></div>
-              <div class="crop-handle -bottom-1.5 left-1/2 -translate-x-1/2 cursor-ns-resize" data-handle="b"></div>
-            </div>
-            <div id="text-overlays-container" class="absolute inset-0 pointer-events-none z-30"></div>
+        <div id="main-viewer-container" class="flex-1 overflow-auto p-8 relative flex items-center justify-center" tabindex="0">
+          <div id="canvas-wrapper" class="relative shadow-2xl bg-white dark:bg-slate-900 rounded-2xl overflow-hidden">
+            <canvas id="main-pdf-canvas" class="block"></canvas>            
           </div>
         </div>
-
       </div>
 
-      <aside id="right-settings-panel" class="hidden w-80 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col shrink-0 z-30 transition-all shadow-xl">
-        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-          <h3 id="right-panel-title" class="font-bold text-sm text-indigo-600 dark:text-indigo-400 flex items-center gap-2">⚙️ Ayarlar</h3>
-        </div>
-        <div class="flex-1 overflow-y-auto p-5 space-y-6 text-xs">
-          <div id="watermark-config-section" class="space-y-5 hidden">
-            <div><label class="block font-semibold mb-1">Filigran Metni</label><input type="text" id="wm-text-input" value="GİZLİ / CONFIDENTIAL" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-800 border rounded-lg font-medium" /></div>
-            <div><div class="flex justify-between font-semibold mb-1"><span>Boyut</span><span id="wm-size-val">36 px</span></div><input type="range" id="wm-size-range" min="12" max="96" value="36" class="w-full accent-indigo-600" /></div>
-            <div><div class="flex justify-between font-semibold mb-1"><span>Opaklık</span><span id="wm-opacity-val">%35</span></div><input type="range" id="wm-opacity-range" min="10" max="100" value="35" class="w-full accent-indigo-600" /></div>
-            <div><div class="flex justify-between font-semibold mb-1"><span>Açı</span><span id="wm-angle-val">45°</span></div><input type="range" id="wm-angle-range" min="-90" max="90" value="45" class="w-full accent-indigo-600" /></div>
-            <div>
-              <label class="block font-semibold mb-2">Hizalama Izgarası</label>
-              <div class="grid grid-cols-3 gap-2 bg-slate-100 dark:bg-slate-950 p-2 rounded-xl border" id="wm-grid-container">
-                <button data-pos="top-left" class="wm-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50 text-center">↖</button>
-                <button data-pos="top-center" class="wm-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50 text-center">⬆</button>
-                <button data-pos="top-right" class="wm-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50 text-center">↗</button>
-                <button data-pos="center-left" class="wm-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50 text-center">⬅</button>
-                <button data-pos="center" class="wm-grid-btn p-3 bg-indigo-600 text-white border border-indigo-600 rounded-lg text-center font-bold">🎯</button>
-                <button data-pos="center-right" class="wm-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50 text-center">➡</button>
-                <button data-pos="bottom-left" class="wm-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50 text-center">↙</button>
-                <button data-pos="bottom-center" class="wm-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50 text-center">⬇</button>
-                <button data-pos="bottom-right" class="wm-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50 text-center">↘</button>
-              </div>
-            </div>
-            <div><label class="block font-semibold mb-1">Renk</label><input type="color" id="wm-color-input" value="#6366f1" class="w-full h-8 rounded cursor-pointer" /></div>
-          </div>
-          <div id="pagenumber-config-section" class="space-y-5 hidden">
-            <div><label class="block font-semibold mb-1">Biçim</label><select id="pn-format-select" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-800 border rounded-lg font-medium"><option value="page-of-total">Sayfa 1 / 10</option><option value="number-only">1</option><option value="page-number">Sayfa 1</option></select></div>
-            <div><label class="block font-semibold mb-1">Başlangıç No</label><input type="number" id="pn-start-input" min="1" value="1" class="w-full px-3 py-2 bg-slate-100 border rounded-lg" /></div>
-            <div>
-              <label class="block font-semibold mb-2">Hizalama</label>
-              <div class="grid grid-cols-3 gap-2 bg-slate-100 dark:bg-slate-950 p-2 rounded-xl border" id="pn-grid-container">
-                <button data-pos="top-left" class="pn-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50">↖</button>
-                <button data-pos="top-center" class="pn-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50">⬆</button>
-                <button data-pos="top-right" class="pn-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50">↗</button>
-                <button data-pos="center-left" class="pn-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50">⬅</button>
-                <button data-pos="center" class="pn-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50">🎯</button>
-                <button data-pos="center-right" class="pn-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50">➡</button>
-                <button data-pos="bottom-left" class="pn-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50">↙</button>
-                <button data-pos="bottom-center" class="pn-grid-btn p-3 bg-indigo-600 text-white border border-indigo-600 rounded-lg font-bold">⬇</button>
-                <button data-pos="bottom-right" class="pn-grid-btn p-3 bg-white dark:bg-slate-900 border rounded-lg hover:bg-indigo-50">↘</button>
-              </div>
-            </div>
-            <div><div class="flex justify-between font-semibold mb-1"><span>Boyut</span><span id="pn-size-val">12 px</span></div><input type="range" id="pn-size-range" min="8" max="28" value="12" class="w-full accent-indigo-600" /></div>
-            <div><div class="flex justify-between font-semibold mb-1"><span>Offset (Y)</span><span id="pn-offset-val">20 px</span></div><input type="range" id="pn-offset-range" min="5" max="60" value="20" class="w-full accent-indigo-600" /></div>
-            <div><label class="block font-semibold mb-1">Renk</label><input type="color" id="pn-color-input" value="#475569" class="w-full h-8 rounded cursor-pointer" /></div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- ŞIK VE PROFESYONEL AI ÖZET PANELİ (HTML HEADER ETİKETLERİ İLE DESTEKLENİR) -->
-      <aside id="ai-sidebar-panel" class="hidden w-[420px] border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col shrink-0 z-30 transition-all shadow-2xl">
-        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-indigo-50/80 dark:bg-indigo-950/40 backdrop-blur-sm">
+      <!-- Sağ Taraf: YZ Agent Paneli -->
+      <aside id="ai-sidebar-panel" class="w-[420px] border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0 z-30 shadow-2xl">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-indigo-50/80 dark:bg-indigo-950/40">
           <div class="flex items-center gap-2">
-            <span class="text-lg">✨</span>
-            <h3 class="font-extrabold text-sm text-indigo-700 dark:text-indigo-300 tracking-wide">Gemini 3.7 Pro Akıllı Özet</h3>
+            <span class="text-lg">🤖</span>
+            <h3 class="font-extrabold text-sm text-indigo-700 dark:text-indigo-300">Gemini 3.7 YZ Agent</h3>
           </div>
-          <button id="btn-close-ai" class="text-slate-400 hover:text-rose-500 font-bold px-2.5 py-1 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors">✕</button>
+          <button id="btn-close-ai" class="text-slate-400 hover:text-rose-500 font-bold px-2.5 py-1 rounded-lg">✕</button>
         </div>
         <div class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col">
             <div id="ai-result-container" class="flex-1 flex flex-col gap-3">
                 <div class="text-center text-xs text-slate-400 my-auto py-10 flex flex-col items-center gap-2">
                     <div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-500 flex items-center justify-center text-lg shadow-inner">⚡</div>
-                    <span>Belge yüklendiğinde otomatik olarak profesyonel özet raporu oluşturulur.</span>
+                    <span>PDF görüntülendiğinde YZ Agent metni tarayıp özet raporu hazırlayacaktır.</span>
                 </div>
             </div>
         </div>
@@ -276,7 +135,7 @@
   </main>
 
   <footer class="h-10 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 flex items-center justify-between text-xs text-slate-500 shrink-0 z-50">
-    <span>Taha Şaprak</span><span>PDF Utility Pro v3.7 (AI Studio Edition)</span>
+    <span>Taha Şaprak</span><span>PDF AI Studio v3.7</span>
   </footer>
 
   <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
@@ -286,45 +145,12 @@
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
 
-    const CATEGORIES = [
-      { id: "pdf-ops", title: "PDF İşlemleri" },
-      { id: "convert", title: "Dönüştürme" },
-      { id: "edit", title: "Düzenleme" },
-      { id: "extra", title: "Ek Araçlar" }
-    ];
-
-    const TOOLS = [
-      { id: "merge", title: "Birleştir", description: "Dosyaları tek PDF'te birleştirin.", category: "pdf-ops", icon: "📑" },
-      { id: "split", title: "Böl", description: "Sayfaları ayrı dosyalara bölün.", category: "pdf-ops", icon: "✂️" },
-      { id: "rotate", title: "Döndür", description: "Sayfaları 90° döndürün.", category: "pdf-ops", icon: "🔄" },
-      { id: "delete", title: "Sil", description: "Sayfaları kalıcı olarak çıkarın.", category: "pdf-ops", icon: "🗑️" },
-      { id: "duplicate", title: "Çoğalt", description: "Sayfanın kopyasını oluşturun.", category: "pdf-ops", icon: "📋" },
-      { id: "reorder", title: "Sırala", description: "Sürükleyip bırakarak sıralayın.", category: "pdf-ops", icon: "🔢" },
-      { id: "crop", title: "Kırp", description: "Sayfaları oranlarla kırpın.", category: "pdf-ops", icon: "✂️" },
-      { id: "jpg-to-pdf", title: "JPG → PDF", description: "JPG'leri PDF yapın.", category: "convert", icon: "🖼️" },
-      { id: "png-to-pdf", title: "PNG → PDF", description: "PNG'leri PDF yapın.", category: "convert", icon: "🖼️" },
-      { id: "pdf-to-jpg", title: "PDF → JPG", description: "Sayfaları JPG'ye aktarın.", category: "convert", icon: "📄" },
-      { id: "pdf-to-png", title: "PDF → PNG", description: "Sayfaları PNG'ye aktarın.", category: "convert", icon: "📄" },
-      { id: "add-text", title: "Metin Ekle", description: "Sayfalara canlı metin ekleyin.", category: "edit", icon: "📝" },
-      { id: "watermark", title: "Filigran", description: "Şeffaf filigran ekleyin.", category: "extra", icon: "💧" },
-      { id: "page-number", title: "Sayfa No", description: "Otomatik numara ekleyin.", category: "extra", icon: "🔢" }
-    ];
-
     let state = {
       theme: 'light',
-      selectedCategory: 'pdf-ops',
-      selectedTool: null,
-      files: [], 
-      pages: [], 
+      files: [],
+      pages: [],
       activePageId: null,
-      zoom: 0.78,
-      fitMode: 'actual', 
-      interactionMode: 'select', 
-      draggedPageId: null,
-      watermark: { text: "GİZLİ / CONFIDENTIAL", fontSize: 36, opacity: 0.35, rotation: 45, position: "center", color: "#6366f1" },
-      pageNumber: { format: "page-of-total", startFrom: 1, position: "bottom-center", fontSize: 12, offsetY: 20, color: "#475569" },
-      splitMode: "all", splitRange: "1-2",
-      activeTextId: null, cropRatio: "free"
+      zoom: 0.78
     };
 
     let currentMainRenderTask = null;
@@ -334,175 +160,20 @@
     function showToast(message, type = 'success') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
-      const bgClasses = type === 'success' ? 'bg-emerald-50 dark:bg-emerald-950 border-emerald-200 text-emerald-900 dark:text-emerald-100' : type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-900' : 'bg-slate-900 border-slate-700 text-white';
-      toast.className = `pointer-events-auto flex items-center justify-between gap-3 p-4 rounded-xl shadow-lg border backdrop-blur-md text-sm font-medium transition-all ${bgClasses}`;
-      toast.innerHTML = `<div class="flex items-center gap-2"><span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span><span>${message}</span></div><button onclick="this.parentElement.remove()" class="font-bold ml-2">×</button>`;
+      toast.className = `pointer-events-auto flex items-center justify-between gap-3 p-4 rounded-xl shadow-lg border text-sm font-medium ${type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-900'}`;
+      toast.innerHTML = `<span>${message}</span>`;
       container.appendChild(toast);
       setTimeout(() => { if (toast.parentElement) toast.remove(); }, 3500);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      buildHeaderMenu();
-      initCategoryTabs();
-      initToolsGrid();
       initEventListeners();
-      initRightPanelControls();
       updateTheme();
-      updateInteractionModeUI();
-      renderViews();
     });
-
-    function buildHeaderMenu() {
-      const menuContainer = document.getElementById('header-tools-menu');
-      let html = '';
-      CATEGORIES.forEach(cat => {
-        html += `<div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 mt-3 px-2 first:mt-1">${cat.title}</div>`;
-        const catTools = TOOLS.filter(t => t.category === cat.id);
-        catTools.forEach(tool => {
-          html += `<button onclick="triggerSelectTool('${tool.id}')" class="w-full text-left px-3 py-1.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-2"><span>${tool.icon}</span> ${tool.title}</button>`;
-        });
-      });
-      menuContainer.innerHTML = html;
-      
-      document.addEventListener('click', (event) => {
-        const dropdown = document.getElementById('pdf-tools-dropdown');
-        const btn = document.getElementById('btn-pdf-tools');
-        if(dropdown && btn) {
-          if (!dropdown.contains(event.target)) {
-            dropdown.classList.remove('active');
-          }
-        }
-      });
-
-      document.getElementById('btn-pdf-tools').addEventListener('click', (event) => {
-        event.stopPropagation();
-        const dropdown = document.getElementById('pdf-tools-dropdown');
-        if(dropdown) dropdown.classList.toggle('active');
-      });
-    }
-
-    window.triggerSelectTool = (toolId) => {
-      const tool = TOOLS.find(t => t.id === toolId);
-      if (tool) {
-          selectTool(tool);
-          document.getElementById('pdf-tools-dropdown')?.classList.remove('active');
-      }
-    };
 
     function updateTheme() {
       document.documentElement.classList.toggle('dark', state.theme === 'dark');
       document.getElementById('theme-icon').textContent = state.theme === 'dark' ? '☀️' : '🌙';
-    }
-
-    function initCategoryTabs() {
-      document.getElementById('category-tabs').innerHTML = CATEGORIES.map(cat => `
-        <button data-cat="${cat.id}" class="cat-tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all shrink-0 ${state.selectedCategory === cat.id ? 'bg-indigo-600 text-white shadow-md' : 'bg-white border text-slate-600 hover:border-slate-300'}">${cat.title}</button>
-      `).join('');
-      document.querySelectorAll('.cat-tab-btn').forEach(btn => btn.addEventListener('click', (e) => { state.selectedCategory = e.currentTarget.dataset.cat; initCategoryTabs(); initToolsGrid(); }));
-    }
-
-    function initToolsGrid() {
-      const container = document.getElementById('tools-grid');
-      container.innerHTML = TOOLS.filter(t => t.category === state.selectedCategory).map(tool => `
-        <div data-tool="${tool.id}" class="tool-card bg-white dark:bg-slate-900 border p-5 rounded-2xl cursor-pointer hover:border-indigo-500 hover:shadow-lg transition-all group">
-          <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mb-3 group-hover:bg-indigo-600 group-hover:text-white transition-colors">${tool.icon}</div>
-          <h4 class="font-bold mb-1 flex justify-between">${tool.title} <span class="text-slate-400 group-hover:translate-x-1 transition-transform">➡️</span></h4>
-          <p class="text-xs text-slate-500">${tool.description}</p>
-        </div>
-      `).join('');
-      document.querySelectorAll('.tool-card').forEach(card => card.addEventListener('click', (e) => selectTool(TOOLS.find(t => t.id === e.currentTarget.dataset.tool))));
-    }
-
-    function selectTool(tool) {
-      state.selectedTool = tool;
-      const fileInput = document.getElementById('file-input');
-      fileInput.accept = (tool.id === 'jpg-to-pdf') ? '.jpg,.jpeg' : (tool.id === 'png-to-pdf') ? '.png' : '.pdf';
-      
-      if (['crop', 'add-text'].includes(tool.id)) {
-         state.interactionMode = 'select';
-         updateInteractionModeUI();
-         if(tool.id === 'crop' && state.activePageId) {
-             let p = state.pages.find(x => x.id === state.activePageId);
-             if(p && !p.cropBox) p.cropBox = { px: 0.25, py: 0.25, pw: 0.5, ph: 0.5 };
-         }
-      }
-
-      if (state.pages.length === 0) fileInput.click();
-      renderViews();
-    }
-
-    function renderViews() {
-      const els = {
-        home: document.getElementById('view-home'), empty: document.getElementById('view-empty-tool'),
-        work: document.getElementById('view-workspace'), badge: document.getElementById('tool-badge-container'),
-        badgeTitle: document.getElementById('tool-badge-title'), rightPanel: document.getElementById('right-settings-panel'),
-        aiPanel: document.getElementById('ai-sidebar-panel'),
-        textBar: document.getElementById('floating-text-bar'), cropBar: document.getElementById('floating-crop-bar'),
-        specPanel: document.getElementById('specialized-tool-panel')
-      };
-
-      if (!state.selectedTool) {
-        els.home.classList.remove('hidden'); els.empty.classList.add('hidden'); els.work.classList.add('hidden'); els.badge.classList.add('hidden');
-      } else {
-        els.home.classList.add('hidden'); els.badge.classList.remove('hidden');
-        els.badgeTitle.innerHTML = `<span>${state.selectedTool.icon}</span> ${state.selectedTool.title}`;
-
-        if (state.pages.length === 0) {
-          els.empty.classList.remove('hidden'); els.work.classList.add('hidden');
-          document.getElementById('empty-tool-title').textContent = `${state.selectedTool.title} İçin Dosya Seçin`;
-        } else {
-          els.empty.classList.add('hidden'); els.work.classList.remove('hidden');
-          
-          els.rightPanel.classList.add('hidden'); els.rightPanel.classList.remove('flex');
-          els.textBar.classList.add('hidden'); els.cropBar.classList.add('hidden'); els.specPanel.classList.add('hidden');
-          
-          if (state.selectedTool.id === 'watermark') {
-            els.rightPanel.classList.remove('hidden'); els.rightPanel.classList.add('flex');
-            els.aiPanel.classList.add('hidden'); els.aiPanel.classList.remove('flex');
-            document.getElementById('watermark-config-section').classList.remove('hidden'); document.getElementById('pagenumber-config-section').classList.add('hidden'); document.getElementById('right-panel-title').innerHTML = '💧 Filigran Ayarları';
-          } else if (state.selectedTool.id === 'page-number') {
-            els.rightPanel.classList.remove('hidden'); els.rightPanel.classList.add('flex');
-            els.aiPanel.classList.add('hidden'); els.aiPanel.classList.remove('flex');
-            document.getElementById('pagenumber-config-section').classList.remove('hidden'); document.getElementById('watermark-config-section').classList.add('hidden'); document.getElementById('right-panel-title').innerHTML = '🔢 Sayfa No Ayarları';
-          } else if (state.selectedTool.id === 'add-text') els.textBar.classList.remove('hidden');
-          else if (state.selectedTool.id === 'crop') els.cropBar.classList.remove('hidden');
-          else if (['merge', 'split', 'pdf-to-jpg', 'pdf-to-png'].includes(state.selectedTool.id)) {
-            els.specPanel.classList.remove('hidden');
-            renderSpecializedPanel();
-          }
-          renderWorkspace();
-        }
-      }
-    }
-
-    function renderSpecializedPanel() {
-      const panel = document.getElementById('specialized-tool-panel');
-      if (state.selectedTool.id === 'merge') {
-        panel.innerHTML = `<div class="font-bold">📑 Birleştirme: <span class="text-indigo-600 font-normal">${state.files.length} dosya, ${state.pages.length} sayfa</span></div><button id="btn-merge-add" class="px-3 py-1 border rounded-lg hover:bg-slate-100">➕ Dosya Ekle</button>`;
-        document.getElementById('btn-merge-add').addEventListener('click', () => document.getElementById('file-input').click());
-      } else if (state.selectedTool.id === 'split') {
-        panel.innerHTML = `<div class="flex items-center gap-4"><span class="font-bold">✂️ Bölme Modu:</span><label class="flex items-center gap-1"><input type="radio" name="split-mode" value="all" ${state.splitMode==='all'?'checked':''}> Tümünü Böl</label><label class="flex items-center gap-1"><input type="radio" name="split-mode" value="range" ${state.splitMode==='range'?'checked':''}> Aralık:</label><input type="text" id="split-range-input" value="${state.splitRange}" class="w-16 px-1 border rounded text-center"></div>`;
-        panel.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', e => state.splitMode = e.target.value));
-        document.getElementById('split-range-input').addEventListener('input', e => state.splitRange = e.target.value);
-      } else {
-        panel.innerHTML = `<div><span class="font-bold">🖼️ Çözünürlük:</span> 150 DPI (Standart)</div>`;
-      }
-    }
-
-    function updateInteractionModeUI() {
-       const btnSelect = document.getElementById('btn-tool-select');
-       const btnPan = document.getElementById('btn-tool-pan');
-       const viewer = document.getElementById('main-viewer-container');
-       
-       if (state.interactionMode === 'select') {
-          btnSelect.className = 'px-2.5 py-1.5 bg-white dark:bg-slate-700 shadow-sm rounded text-xs font-semibold text-slate-900 dark:text-white';
-          btnPan.className = 'px-2.5 py-1.5 hover:bg-white dark:hover:bg-slate-700 rounded text-xs text-slate-600 dark:text-slate-300 font-semibold cursor-pointer';
-          viewer.classList.remove('cursor-grab');
-       } else {
-          btnPan.className = 'px-2.5 py-1.5 bg-white dark:bg-slate-700 shadow-sm rounded text-xs font-semibold text-slate-900 dark:text-white';
-          btnSelect.className = 'px-2.5 py-1.5 hover:bg-white dark:hover:bg-slate-700 rounded text-xs text-slate-600 dark:text-slate-300 font-semibold cursor-pointer';
-          viewer.classList.add('cursor-grab');
-       }
     }
 
     async function extractAllTextFromCurrentPDF() {
@@ -524,32 +195,25 @@
         }
     }
 
-    // GÜNCELLENMİŞ HTML HEADER ETİKETLERİ DESTEKLEYEN AI ÖZET OLUŞTURUCU
-    async function triggerAiSummaryGeneration() {
+    async function runAiAgent() {
         const resultContainer = document.getElementById('ai-result-container');
         
         if (state.pages.length === 0) {
-            resultContainer.innerHTML = `
-                <div class="text-center text-xs text-slate-400 my-auto py-10 flex flex-col items-center gap-3">
-                    <div class="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-500 flex items-center justify-center text-xl shadow-inner">📂</div>
-                    <p class="font-medium">Lütfen ana sayfadan veya üst menüden bir PDF dosyası yükleyin.</p>
-                    <button onclick="document.getElementById('file-input').click()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold shadow hover:bg-indigo-700 transition">Dosya Seç</button>
-                </div>
-            `;
+            resultContainer.innerHTML = '<div class="text-center text-xs text-slate-400 my-auto py-10">Önce bir PDF belgesi yüklemelisiniz.</div>';
             return;
         }
         
         resultContainer.innerHTML = `
             <div class="text-xs text-slate-500 text-center py-16 flex flex-col items-center gap-3">
                 <div class="spinner border-t-indigo-500 w-10 h-10"></div>
-                <span class="font-bold text-slate-700 dark:text-slate-200">Gemini 3.7 Pro belgenizi analiz ediyor...</span>
+                <span class="font-bold text-slate-700 dark:text-slate-200">YZ Agent belgenizi okuyor ve analiz ediyor...</span>
             </div>
         `;
         
         const extractedText = await extractAllTextFromCurrentPDF();
         
         if (!extractedText || extractedText.length === 0) {
-            resultContainer.innerHTML = '<div class="text-xs text-rose-500 text-center p-4 bg-rose-50 dark:bg-rose-950/30 rounded-xl border border-rose-200">Belgeden metin okunamadı. Taranmış resim tabanlı PDF olabilir.</div>';
+            resultContainer.innerHTML = '<div class="text-xs text-rose-500 text-center p-4 bg-rose-50 rounded-xl border border-rose-200">Belgeden metin okunamadı. Taranmış resim tabanlı PDF olabilir.</div>';
             return;
         }
 
@@ -560,24 +224,20 @@
                 body: JSON.stringify({ text: extractedText })
             });
 
-            if (!response.ok) {
-                throw new Error('Sunucu yanıt vermedi.');
-            }
+            if (!response.ok) throw new Error('Sunucu yanıt vermedi.');
 
             const data = await response.json();
             const rawSummary = data.summary || data.result || 'Özet oluşturulamadı.';
 
-            // HTML Header ve Madde Ayrıştırma Optimizasyonu
             let formattedHtml = '';
             const lines = rawSummary.split('\n');
             for (let line of lines) {
                 let cleanLine = line.trim();
                 if (cleanLine.length === 0) continue;
 
-                // Eğer yapay zeka başlık veya madde verdiyse şık HTML taglerine dönüştür
-                if (cleanLine.startsWith('# ') || cleanLine.startsWith('**') && cleanLine.endsWith('**') && cleanLine.length < 50) {
+                if (cleanLine.startsWith('# ') || (cleanLine.startsWith('**') && cleanLine.endsWith('**') && cleanLine.length < 60)) {
                     let titleText = cleanLine.replace(/^#+\s*/, '').replace(/\*\*/g, '');
-                    formattedHtml += `<h4 class="text-sm font-bold text-indigo-700 dark:text-indigo-400 mt-4 mb-1.5 flex items-center gap-1.5 border-b border-indigo-100 dark:border-indigo-900 pb-1">📌 ${titleText}</h4>`;
+                    formattedHtml += `<h4 class="text-xs font-extrabold text-indigo-700 dark:text-indigo-400 mt-4 mb-1.5 flex items-center gap-1.5 border-b border-indigo-100 dark:border-indigo-900 pb-1 uppercase tracking-wider">📌 ${titleText}</h4>`;
                 } else if (cleanLine.startsWith('* ') || cleanLine.startsWith('- ') || cleanLine.startsWith('• ')) {
                     let bulletText = cleanLine.replace(/^[\*\-\•]\s*/, '');
                     formattedHtml += `<li class="leading-relaxed text-slate-700 dark:text-slate-200 ml-4">${bulletText}</li>`;
@@ -587,20 +247,19 @@
             }
 
             resultContainer.innerHTML = `
-                <div class="bg-gradient-to-br from-indigo-50/70 to-slate-50 dark:from-indigo-950/30 dark:to-slate-900 p-5 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-sm space-y-3">
+                <div class="bg-gradient-to-br from-indigo-50/70 to-slate-50 dark:from-indigo-950/30 dark:to-slate-900 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-sm space-y-3">
                     <div class="flex items-center justify-between border-b border-indigo-200 dark:border-indigo-800 pb-3">
-                        <span class="text-xs font-extrabold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">⚡ Yönetici Özeti Raporu</span>
-                        <button onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.innerText); showToast('Özet panoya kopyalandı! ✅');" class="text-xs bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-indigo-50 transition shadow-sm font-semibold">Kopyala</button>
+                        <span class="text-xs font-extrabold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">⚡ Agent Analiz Raporu</span>
+                        <button onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.innerText); showToast('Rapor kopyalandı! ✅');" class="text-xs bg-white dark:bg-slate-800 text-slate-600 px-3 py-1 rounded-lg border font-semibold">Kopyala</button>
                     </div>
                     <div class="font-sans text-xs space-y-2 max-h-[calc(100vh-220px)] overflow-y-auto pr-1">${formattedHtml}</div>
                 </div>
             `;
         } catch (error) {
-            console.warn("API köprüsü çağrılamadı:", error);
             resultContainer.innerHTML = `
-                <div class="bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 p-4 rounded-xl border border-amber-200 dark:border-amber-800 text-xs space-y-2 shadow-sm">
-                    <strong>💡 Sunucu / Vercel Yapılandırma Notu[cite: 1]</strong>
-                    <p>Metin başarıyla tarandı ancak canlı özet için Vercel üzerinde <code>/api/summarize</code> fonksiyonunun aktif olması gerekiyor[cite: 1].</p>
+                <div class="bg-amber-50 dark:bg-amber-950/30 text-amber-800 p-4 rounded-xl border border-amber-200 text-xs space-y-2">
+                    <strong>💡 Vercel Yapılandırma Notu[cite: 1]</strong>
+                    <p>Metin okundu ancak canlı YZ Agent için Vercel üzerinde <code>/api/summarize</code> fonksiyonu aktif olmalıdır[cite: 1].</p>
                     <div class="font-mono bg-white dark:bg-slate-900 p-2 rounded border text-[10px] max-h-32 overflow-y-auto">${extractedText.substring(0, 300)}...</div>
                 </div>
             `;
@@ -609,338 +268,64 @@
 
     function initEventListeners() {
       document.getElementById('btn-theme-toggle').addEventListener('click', () => { state.theme = state.theme === 'light' ? 'dark' : 'light'; updateTheme(); });
-      document.getElementById('btn-home-logo').addEventListener('click', () => { state.selectedTool = null; renderViews(); });
-      document.getElementById('btn-back-home').addEventListener('click', () => { state.selectedTool = null; renderViews(); });
-      document.getElementById('drop-zone').addEventListener('click', () => document.getElementById('file-input').click());
-      document.getElementById('btn-empty-upload').addEventListener('click', () => document.getElementById('file-input').click());
-      document.getElementById('btn-add-more-files').addEventListener('click', () => document.getElementById('file-input').click());
+      document.getElementById('btn-home-logo').addEventListener('click', () => resetWorkspace());
+      document.getElementById('btn-back-home').addEventListener('click', () => resetWorkspace());
       
-      // SAĞ ÜSTTEKİ AI BUTONU: HER DURUMDA AKTİF VE ÇALIŞIR
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500'));
+      dropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('border-indigo-500');
+          if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+      });
+
+      fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFiles(e.target.files); });
+
+      // Sağ Üstteki YZ Agent Butonu
       document.getElementById('btn-toggle-ai').addEventListener('click', () => {
           const panel = document.getElementById('ai-sidebar-panel');
-          const rightPanel = document.getElementById('right-settings-panel');
           if (panel.classList.contains('hidden')) {
               panel.classList.remove('hidden');
-              panel.classList.add('flex');
-              rightPanel.classList.add('hidden');
-              rightPanel.classList.remove('flex');
-              triggerAiSummaryGeneration(); // Otomatik özet çıkar
+              runAiAgent();
           } else {
               panel.classList.add('hidden');
-              panel.classList.remove('flex');
           }
       });
 
       document.getElementById('btn-close-ai').addEventListener('click', () => {
-          const panel = document.getElementById('ai-sidebar-panel');
-          panel.classList.add('hidden');
-          panel.classList.remove('flex');
+          document.getElementById('ai-sidebar-panel').classList.add('hidden');
       });
 
-      document.getElementById('btn-clear-workspace').addEventListener('click', () => {
-         if(confirm("Tüm dosyaları ve çalışma alanını temizlemek istediğinize emin misiniz?")) {
-             state.files = []; state.pages = []; state.activePageId = null; state.selectedTool = null; 
-             document.getElementById('file-input').value = '';
-             renderViews();
-         }
-      });
-      
-      document.getElementById('file-input').addEventListener('change', (e) => { if(e.target.files.length) handleFiles(e.target.files); });
-
-      const thumbnailList = document.getElementById('thumbnail-list');
-      
-      thumbnailList.addEventListener('dragstart', (e) => {
-          const target = e.target.closest('div[data-page-id]');
-          if(target) {
-              e.dataTransfer.setData('text/plain', target.dataset.pageId);
-              target.classList.add('drag-ghost');
-              state.draggedPageId = target.dataset.pageId;
-              if(state.activePageId !== state.draggedPageId) {
-                  state.activePageId = state.draggedPageId;
-                  renderWorkspace();
-              }
-          }
-      });
-
-      thumbnailList.addEventListener('dragend', (e) => {
-           const target = e.target.closest('div[data-page-id]');
-           if(target) target.classList.remove('drag-ghost');
-           document.querySelectorAll('.drop-target-above, .drop-target-below').forEach(el => {
-              el.classList.remove('drop-target-above', 'drop-target-below');
-           });
-           state.draggedPageId = null;
-      });
-
-      thumbnailList.addEventListener('dragover', (e) => {
-          if(!state.draggedPageId) return;
-          e.preventDefault(); 
-          const target = e.target.closest('div[data-page-id]');
-          if(target && target.dataset.pageId !== state.draggedPageId) {
-             const rect = target.getBoundingClientRect();
-             const midY = rect.top + rect.height / 2;
-             document.querySelectorAll('.drop-target-above, .drop-target-below').forEach(el => {
-                if(el !== target) el.classList.remove('drop-target-above', 'drop-target-below');
-             });
-             if(e.clientY < midY) {
-                 target.classList.add('drop-target-above');
-                 target.classList.remove('drop-target-below');
-             } else {
-                 target.classList.add('drop-target-below');
-                 target.classList.remove('drop-target-above');
-             }
-          }
-      });
-      
-      thumbnailList.addEventListener('dragleave', (e) => {
-          const target = e.target.closest('div[data-page-id]');
-          if(target) target.classList.remove('drop-target-above', 'drop-target-below');
-      });
-
-      thumbnailList.addEventListener('drop', (e) => {
-          if(!state.draggedPageId) return;
-          e.preventDefault();
-          const target = e.target.closest('div[data-page-id]');
-          if(target && target.dataset.pageId !== state.draggedPageId) {
-              const droppedId = state.draggedPageId;
-              const targetId = target.dataset.pageId;
-              const rect = target.getBoundingClientRect();
-              const midY = rect.top + rect.height / 2;
-              const insertAfter = e.clientY > midY;
-
-              const oldIndex = state.pages.findIndex(p => p.id === droppedId);
-              let newIndex = state.pages.findIndex(p => p.id === targetId);
-              if(oldIndex === -1 || newIndex === -1) return;
-              const pageToMove = state.pages.splice(oldIndex, 1)[0];
-              if (oldIndex < newIndex) newIndex--;
-              if(insertAfter) state.pages.splice(newIndex + 1, 0, pageToMove);
-              else state.pages.splice(newIndex, 0, pageToMove);
-
-              target.classList.remove('drop-target-above', 'drop-target-below');
-              renderWorkspace();
-          }
-      });
-
-      window.addEventListener('keydown', (e) => {
-         if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
-         if (state.pages.length > 0 && state.activePageId) {
-             let idx = state.pages.findIndex(p => p.id === state.activePageId);
-             if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                 e.preventDefault();
-                 if(idx > 0) { state.activePageId = state.pages[idx - 1].id; renderWorkspace(); }
-             } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                 e.preventDefault();
-                 if(idx < state.pages.length - 1) { state.activePageId = state.pages[idx + 1].id; renderWorkspace(); }
-             } else if (e.key === 'Delete' || e.key === 'Backspace') {
-                 e.preventDefault();
-                 deleteActivePage();
-             }
-         }
-      });
+      document.getElementById('btn-clear-workspace').addEventListener('click', () => resetWorkspace());
 
       document.getElementById('btn-prev-page').addEventListener('click', () => {
-         if(!state.pages.length) return;
          let idx = state.pages.findIndex(p => p.id === state.activePageId);
          if(idx > 0) { state.activePageId = state.pages[idx - 1].id; renderWorkspace(); }
       });
       document.getElementById('btn-next-page').addEventListener('click', () => {
-         if(!state.pages.length) return;
          let idx = state.pages.findIndex(p => p.id === state.activePageId);
          if(idx < state.pages.length - 1) { state.activePageId = state.pages[idx + 1].id; renderWorkspace(); }
       });
 
-      document.getElementById('btn-zoom-in').addEventListener('click', () => { state.fitMode = 'actual'; state.zoom = Math.min(3.0, state.zoom + 0.2); renderMainCanvas(); });
-      document.getElementById('btn-zoom-out').addEventListener('click', () => { state.fitMode = 'actual'; state.zoom = Math.max(0.4, state.zoom - 0.2); renderMainCanvas(); });
-      document.getElementById('btn-toggle-fit').addEventListener('click', () => { state.fitMode = state.fitMode === 'fit' ? 'actual' : 'fit'; renderMainCanvas(); });
-
-      document.getElementById('btn-tool-select').addEventListener('click', () => { state.interactionMode = 'select'; updateInteractionModeUI(); });
-      document.getElementById('btn-tool-pan').addEventListener('click', () => { state.interactionMode = 'pan'; updateInteractionModeUI(); });
-
-      const viewer = document.getElementById('main-viewer-container');
-      viewer.addEventListener('wheel', (e) => {
-         if (e.ctrlKey) {
-            e.preventDefault();
-            state.fitMode = 'actual';
-            if (e.deltaY < 0) state.zoom = Math.min(3.0, state.zoom + 0.1);
-            else state.zoom = Math.max(0.4, state.zoom - 0.1);
-            requestAnimationFrame(() => renderMainCanvas());
-         }
-      }, { passive: false });
-
-      let isPanning = false;
-      let isSpacePressed = false;
-      let panStartX, panStartY, panScrollLeft, panScrollTop;
-
-      window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT') {
-          e.preventDefault();
-          if (!isSpacePressed) { isSpacePressed = true; viewer.classList.add('cursor-grab'); }
-        }
-      });
-      window.addEventListener('keyup', (e) => {
-        if (e.code === 'Space') { isSpacePressed = false; isPanning = false; if(state.interactionMode !== 'pan') viewer.classList.remove('cursor-grab', 'cursor-grabbing'); }
-      });
-
-      viewer.addEventListener('mousedown', (e) => {
-        if (isSpacePressed || e.button === 1 || state.interactionMode === 'pan') {
-          e.preventDefault(); isPanning = true; viewer.classList.add('cursor-grabbing');
-          panStartX = e.pageX - viewer.offsetLeft; panStartY = e.pageY - viewer.offsetTop;
-          panScrollLeft = viewer.scrollLeft; panScrollTop = viewer.scrollTop;
-        }
-      });
-      window.addEventListener('mousemove', (e) => {
-        if (!isPanning) return;
-        e.preventDefault();
-        viewer.scrollLeft = panScrollLeft - ((e.pageX - viewer.offsetLeft) - panStartX);
-        viewer.scrollTop = panScrollTop - ((e.pageY - viewer.offsetTop) - panStartY);
-      });
-      window.addEventListener('mouseup', () => {
-        if (isPanning) { isPanning = false; viewer.classList.remove('cursor-grabbing'); }
-      });
-
-      initInteractiveCropHandles();
+      document.getElementById('btn-zoom-in').addEventListener('click', () => { state.zoom = Math.min(3.0, state.zoom + 0.2); renderMainCanvas(); });
+      document.getElementById('btn-zoom-out').addEventListener('click', () => { state.zoom = Math.max(0.4, state.zoom - 0.2); renderMainCanvas(); });
     }
 
-    function initRightPanelControls() {
-      document.getElementById('wm-text-input').addEventListener('input', e => { state.watermark.text = e.target.value; renderMainCanvas(); });
-      document.getElementById('wm-size-range').addEventListener('input', e => { state.watermark.fontSize = parseInt(e.target.value); document.getElementById('wm-size-val').textContent=`${e.target.value}px`; renderMainCanvas(); });
-      document.getElementById('wm-opacity-range').addEventListener('input', e => { state.watermark.opacity = parseInt(e.target.value)/100; document.getElementById('wm-opacity-val').textContent=`%${e.target.value}`; renderMainCanvas(); });
-      document.getElementById('wm-angle-range').addEventListener('input', e => { state.watermark.rotation = parseInt(e.target.value); document.getElementById('wm-angle-val').textContent=`${e.target.value}°`; renderMainCanvas(); });
-      document.getElementById('wm-color-input').addEventListener('input', e => { state.watermark.color = e.target.value; renderMainCanvas(); });
-      document.querySelectorAll('.wm-grid-btn').forEach(btn => btn.addEventListener('click', e => {
-        document.querySelectorAll('.wm-grid-btn').forEach(b => b.className = 'wm-grid-btn p-3 bg-white border rounded-lg hover:bg-indigo-50 text-center');
-        e.currentTarget.className = 'wm-grid-btn p-3 bg-indigo-600 text-white border-indigo-600 rounded-lg text-center font-bold';
-        state.watermark.position = e.currentTarget.dataset.pos; renderMainCanvas();
-      }));
-
-      document.getElementById('pn-format-select').addEventListener('change', e => { state.pageNumber.format = e.target.value; renderMainCanvas(); });
-      document.getElementById('pn-size-range').addEventListener('input', e => { state.pageNumber.fontSize = parseInt(e.target.value); document.getElementById('pn-size-val').textContent=`${e.target.value}px`; renderMainCanvas(); });
-      document.getElementById('pn-offset-range').addEventListener('input', e => { state.pageNumber.offsetY = parseInt(e.target.value); document.getElementById('pn-offset-val').textContent=`${e.target.value}px`; renderMainCanvas(); });
-      document.querySelectorAll('.pn-grid-btn').forEach(btn => btn.addEventListener('click', e => {
-        document.querySelectorAll('.pn-grid-btn').forEach(b => b.className = 'pn-grid-btn p-3 bg-white border rounded-lg hover:bg-indigo-50 text-center');
-        e.currentTarget.className = 'pn-grid-btn p-3 bg-indigo-600 text-white border-indigo-600 rounded-lg font-bold';
-        state.pageNumber.position = e.currentTarget.dataset.pos; renderMainCanvas();
-      }));
-    }
-
-    function initInteractiveCropHandles() { 
-      const overlay = document.getElementById('crop-overlay');
-      const wrapper = document.getElementById('canvas-wrapper');
-      let isDraggingCrop = false;
-      let isResizingCrop = false;
-      let resizeHandle = '';
-      let startX, startY, startCrop;
-
-      wrapper.addEventListener('mousedown', (e) => {
-        if(state.selectedTool?.id !== 'crop') return;
-        if(e.target.classList.contains('crop-handle')) {
-            isResizingCrop = true;
-            resizeHandle = e.target.dataset.handle;
-            e.stopPropagation();
-        } else if(e.target === overlay) {
-            isDraggingCrop = true;
-            e.stopPropagation();
-        } else {
-            return;
-        }
-
-        let p = state.pages.find(x => x.id === state.activePageId);
-        if(!p) return;
-        if(!p.cropBox) p.cropBox = { px: 0.25, py: 0.25, pw: 0.5, ph: 0.5 };
-        startCrop = { ...p.cropBox };
-        startX = e.clientX;
-        startY = e.clientY;
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        if(!isDraggingCrop && !isResizingCrop) return;
-        let p = state.pages.find(x => x.id === state.activePageId);
-        if(!p || !p.cropBox) return;
-
-        const canvas = document.getElementById('main-pdf-canvas');
-        const dx = (e.clientX - startX) / canvas.offsetWidth;
-        const dy = (e.clientY - startY) / canvas.offsetHeight;
-
-        if(isDraggingCrop) {
-            p.cropBox.px = Math.max(0, Math.min(1 - p.cropBox.pw, startCrop.px + dx));
-            p.cropBox.py = Math.max(0, Math.min(1 - p.cropBox.ph, startCrop.py + dy));
-        } else if(isResizingCrop) {
-            let newPx = startCrop.px, newPy = startCrop.py, newPw = startCrop.pw, newPh = startCrop.ph;
-            if(resizeHandle.includes('l')) { newPx += dx; newPw -= dx; }
-            if(resizeHandle.includes('r')) { newPw += dx; }
-            if(resizeHandle.includes('t')) { newPy += dy; newPh -= dy; }
-            if(resizeHandle.includes('b')) { newPh += dy; }
-            if(newPw < 0.05) { newPw = 0.05; if(resizeHandle.includes('l')) newPx = startCrop.px + startCrop.pw - 0.05; }
-            if(newPh < 0.05) { newPh = 0.05; if(resizeHandle.includes('t')) newPy = startCrop.py + startCrop.ph - 0.05; }
-            if(newPx < 0) { newPw += newPx; newPx = 0; }
-            if(newPy < 0) { newPh += newPy; newPy = 0; }
-            if(newPx + newPw > 1) { newPw = 1 - newPx; }
-            if(newPy + newPh > 1) { newPh = 1 - newPy; }
-            p.cropBox.px = newPx; p.cropBox.py = newPy; p.cropBox.pw = newPw; p.cropBox.ph = newPh;
-        }
-        drawCropOverlay();
-      });
-
-      window.addEventListener('mouseup', () => { isDraggingCrop = false; isResizingCrop = false; });
-      
-      document.getElementById('crop-ratio-select').addEventListener('change', (e) => {
-          let p = state.pages.find(x => x.id === state.activePageId);
-          if(!p) return;
-          if(!p.cropBox) p.cropBox = { px: 0.25, py: 0.25, pw: 0.5, ph: 0.5 };
-          if(e.target.value !== 'free') {
-             const ratio = parseFloat(e.target.value);
-             const canvas = document.getElementById('main-pdf-canvas');
-             const canvasRatio = canvas.offsetWidth / canvas.offsetHeight;
-             if (ratio < canvasRatio) {
-                 p.cropBox.ph = 0.5;
-                 p.cropBox.pw = (0.5 * canvas.offsetHeight * ratio) / canvas.offsetWidth;
-             } else {
-                 p.cropBox.pw = 0.5;
-                 p.cropBox.ph = (0.5 * canvas.offsetWidth / ratio) / canvas.offsetHeight;
-             }
-             p.cropBox.px = (1 - p.cropBox.pw) / 2;
-             p.cropBox.py = (1 - p.cropBox.ph) / 2;
-          }
-          drawCropOverlay();
-      });
-      
-      document.getElementById('btn-reset-crop-selection').addEventListener('click', () => {
-         let p = state.pages.find(x => x.id === state.activePageId);
-         if(p) { delete p.cropBox; drawCropOverlay(); }
-      });
-      
-      document.getElementById('btn-apply-crop-single').addEventListener('click', () => {
-         let p = state.pages.find(x => x.id === state.activePageId);
-         if(p && p.cropBox) showToast('Kırpma alanı sadece aktif sayfaya uygulandı. ✅', 'success');
-         else showToast('Lütfen önce bir kırpma alanı belirleyin.', 'info');
-      });
-      
-      document.getElementById('btn-apply-crop-all').addEventListener('click', () => {
-         let p = state.pages.find(x => x.id === state.activePageId);
-         if(p && p.cropBox) {
-             const box = { ...p.cropBox };
-             state.pages.forEach(page => page.cropBox = { ...box });
-             showToast('Kırpma alanı tüm sayfalara uygulandı. ✅', 'success');
-         }
-      });
-    }
-
-    function drawCropOverlay() {
-       const overlay = document.getElementById('crop-overlay');
-       if(state.selectedTool?.id !== 'crop' || !state.activePageId) { overlay.classList.add('hidden'); return; }
-       let p = state.pages.find(x => x.id === state.activePageId);
-       if(!p || !p.cropBox) { overlay.classList.add('hidden'); return; }
-       const canvas = document.getElementById('main-pdf-canvas');
-       if(!canvas) return;
-       overlay.classList.remove('hidden');
-       overlay.style.left = (p.cropBox.px * canvas.offsetWidth) + 'px';
-       overlay.style.top = (p.cropBox.py * canvas.offsetHeight) + 'px';
-       overlay.style.width = (p.cropBox.pw * canvas.offsetWidth) + 'px';
-       overlay.style.height = (p.cropBox.ph * canvas.offsetHeight) + 'px';
-       document.getElementById('crop-dim-badge').textContent = `${Math.round(p.cropBox.pw * canvas.offsetWidth)} x ${Math.round(p.cropBox.ph * canvas.offsetHeight)} px`;
+    function resetWorkspace() {
+      state.files = [];
+      state.pages = [];
+      state.activePageId = null;
+      document.getElementById('file-input').value = '';
+      document.getElementById('view-home').classList.remove('hidden');
+      document.getElementById('view-workspace').classList.add('hidden');
+      document.getElementById('tool-badge-container').classList.add('hidden');
     }
 
     async function handleFiles(fileList) {
-      let added = 0;
       for (const file of Array.from(fileList)) {
         if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
           try {
@@ -951,26 +336,22 @@
             for (let i = 0; i < pdfjsDoc.numPages; i++) {
               const p = await pdfjsDoc.getPage(i+1);
               const pid = makeId('page');
-              state.pages.push({ id: pid, docId, originalPageIndex: i, baseRotation: p.rotate || 0, userRotation: 0, texts: [] });
+              state.pages.push({ id: pid, docId, originalPageIndex: i, baseRotation: p.rotate || 0, userRotation: 0 });
               if (!state.activePageId) state.activePageId = pid;
             }
-            added++;
-          } catch(e) { showToast(`Okuma hatası: ${file.name}`, 'error'); }
+            document.getElementById('file-name-badge').textContent = file.name;
+          } catch(e) { showToast(`Dosya okunamadı: ${file.name}`, 'error'); }
         }
       }
-      if (added > 0) { 
-          showToast(`${added} dosya eklendi.`); 
-          // Eğer araç seçili değilse otomatik olarak 'split' veya ilk aracı aktif yapıp çalışma alanına atalım
-          if(!state.selectedTool) {
-              state.selectedTool = TOOLS[0]; // Varsayılan ilk araç
-          }
-          renderViews(); 
-          
-          // Eğer sağdaki AI paneli açık ise otomatik özeti tetikle
-          const aiPanel = document.getElementById('ai-sidebar-panel');
-          if (aiPanel && !aiPanel.classList.contains('hidden')) {
-              triggerAiSummaryGeneration();
-          }
+
+      if (state.pages.length > 0) {
+        document.getElementById('view-home').classList.add('hidden');
+        document.getElementById('view-workspace').classList.remove('hidden');
+        document.getElementById('tool-badge-container').classList.remove('hidden');
+        renderWorkspace();
+        
+        // Dosya yüklenir yüklenmez YZ Agent otomatik çalışsın
+        runAiAgent();
       }
     }
 
@@ -982,39 +363,26 @@
       document.getElementById('btn-next-page').disabled = activeIdx >= state.pages.length - 1;
 
       renderThumbnailsList();
-      renderActionButtons();
-      
-      const viewer = document.getElementById('main-viewer-container');
-      if (viewer) viewer.scrollTop = 0;
       renderMainCanvas();
     }
 
     function renderThumbnailsList() {
       const container = document.getElementById('thumbnail-list');
       container.innerHTML = state.pages.map((p, i) => `
-        <div id="thumb-item-${p.id}" data-page-id="${p.id}" draggable="true"
-             class="p-2 border-2 rounded-xl cursor-pointer select-none transition-all ${p.id===state.activePageId ? 'border-indigo-600 bg-indigo-50 shadow-md transform scale-[1.02]' : 'border-slate-200 bg-white hover:border-slate-300'}">
-          <div class="text-xs font-semibold text-slate-500 mb-1 flex justify-between items-center">
-              <span class="flex items-center"><span class="cursor-grab hover:text-indigo-600 mr-1 opacity-50 hover:opacity-100" title="Sürükleyip Sırala">⠿</span> ${i+1}</span>
-              ${p.userRotation!==0?`<span class="text-[10px] bg-indigo-100 text-indigo-700 px-1 rounded">${p.userRotation}°</span>`:''}
-          </div>
-          <div class="relative bg-slate-100 rounded overflow-hidden min-h-[90px] flex items-center justify-center pointer-events-none">
+        <div id="thumb-item-${p.id}" data-page-id="${p.id}" 
+             class="p-2 border-2 rounded-xl cursor-pointer select-none transition-all ${p.id===state.activePageId ? 'border-indigo-600 bg-indigo-50 shadow-md' : 'border-slate-200 bg-white hover:border-slate-300'}">
+          <div class="text-xs font-semibold text-slate-500 mb-1">Sayfa ${i+1}</div>
+          <div class="relative bg-slate-100 rounded overflow-hidden min-h-[80px] flex items-center justify-center">
             <canvas id="thumb-canvas-${p.id}" class="max-w-full h-auto"></canvas>
           </div>
         </div>
       `).join('');
 
       container.querySelectorAll('div[data-page-id]').forEach(el => {
-        el.addEventListener('click', () => { if(state.activePageId !== el.dataset.pageId) { state.activePageId = el.dataset.pageId; renderWorkspace(); } });
+        el.addEventListener('click', () => { state.activePageId = el.dataset.pageId; renderWorkspace(); });
       });
 
-      const activeEl = document.getElementById(`thumb-item-${state.activePageId}`);
-      if(activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => { if(e.isIntersecting) renderThumbnailCanvas(e.target.dataset.pageId); });
-      }, { rootMargin: '100px' });
-      container.querySelectorAll('div[data-page-id]').forEach(el => observer.observe(el));
+      state.pages.forEach(p => renderThumbnailCanvas(p.id));
     }
 
     async function renderThumbnailCanvas(pid) {
@@ -1026,92 +394,11 @@
       if(!canvas || canvas.dataset.rendered === 'true') return;
       try {
         const p = await doc.pdfjsDoc.getPage(page.originalPageIndex + 1);
-        const viewport = p.getViewport({ scale: 0.25, rotation: normalizeRotation(page.baseRotation + page.userRotation) });
+        const viewport = p.getViewport({ scale: 0.2 });
         canvas.width = viewport.width; canvas.height = viewport.height;
         await p.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
         canvas.dataset.rendered = 'true';
       } catch(e) {}
-    }
-
-    function renderActionButtons() {
-      const container = document.getElementById('action-buttons-container');
-      const tool = state.selectedTool;
-      let btn = '';
-      if (tool?.id === 'rotate') btn = `<button id="btn-action-rotate" class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg shadow-sm text-xs font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-1.5">🔄 90° Döndür</button>`;
-      else if (tool?.id === 'delete') btn = `<button id="btn-action-delete" class="px-3 py-1.5 bg-rose-600 text-white rounded-lg shadow-sm text-xs font-semibold hover:bg-rose-700 transition-colors flex items-center gap-1.5">🗑️ Sayfayı Sil</button>`;
-      
-      container.innerHTML = `${btn} <button id="btn-action-export" class="px-4 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-500/20 hover:bg-indigo-700 transition-colors flex items-center gap-1.5">⬇️ PDF Olarak İndir</button>`;
-      
-      if(document.getElementById('btn-action-rotate')) document.getElementById('btn-action-rotate').addEventListener('click', () => {
-         let p = state.pages.find(x => x.id === state.activePageId);
-         if(p) { p.userRotation = normalizeRotation(p.userRotation + 90); renderWorkspace(); }
-      });
-      if(document.getElementById('btn-action-delete')) document.getElementById('btn-action-delete').addEventListener('click', () => deleteActivePage());
-      document.getElementById('btn-action-export').addEventListener('click', async () => await executeRealPDFExport());
-    }
-
-    function deleteActivePage() {
-       if(!state.activePageId) return;
-       const idx = state.pages.findIndex(p => p.id === state.activePageId);
-       if(idx === -1) return;
-       state.pages.splice(idx, 1);
-       if(state.pages.length > 0) state.activePageId = state.pages[Math.min(idx, state.pages.length - 1)].id;
-       else state.activePageId = null;
-       renderWorkspace();
-       showToast('Sayfa başarıyla silindi.', 'info');
-    }
-
-    async function executeRealPDFExport() {
-        if (state.pages.length === 0) { showToast('Dışa aktarılacak sayfa yok.', 'error'); return; }
-        showToast('PDF hazırlanıyor, lütfen bekleyin...', 'info');
-        const btn = document.getElementById('btn-action-export');
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<div class="spinner w-3 h-3 border-2 border-t-white inline-block"></div> İşleniyor...';
-
-        try {
-            const { PDFDocument, degrees } = window.PDFLib;
-            const outputPdf = await PDFDocument.create();
-            const cachedDocs = {};
-            for (const page of state.pages) {
-                if (!cachedDocs[page.docId]) {
-                    const fileEntry = state.files.find(f => f.id === page.docId);
-                    const arrayBuffer = await fileEntry.file.arrayBuffer();
-                    cachedDocs[page.docId] = await PDFDocument.load(arrayBuffer);
-                }
-                const sourceDoc = cachedDocs[page.docId];
-                const [copiedPage] = await outputPdf.copyPages(sourceDoc, [page.originalPageIndex]);
-                const currentRot = copiedPage.getRotation().angle;
-                copiedPage.setRotation(degrees(currentRot + page.userRotation));
-                if (page.cropBox) {
-                    const width = copiedPage.getWidth();
-                    const height = copiedPage.getHeight();
-                    const x = page.cropBox.px * width;
-                    const y = height - (page.cropBox.py * height) - (page.cropBox.ph * height);
-                    const w = page.cropBox.pw * width;
-                    const h = page.cropBox.ph * height;
-                    copiedPage.setCropBox(x, y, w, h);
-                }
-                outputPdf.addPage(copiedPage);
-            }
-            const pdfBytes = await outputPdf.save();
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `PDF_Utility_Pro_Cikti_${new Date().getTime()}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            showToast('PDF dosyası başarıyla indirildi! ✅', 'success');
-        } catch (error) {
-            console.error('PDF oluşturma hatası:', error);
-            showToast('Çıktı alınırken teknik bir hata oluştu.', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
     }
 
     async function renderMainCanvas() {
@@ -1119,71 +406,28 @@
       const page = state.pages.find(p => p.id === state.activePageId);
       const doc = state.files.find(f => f.id === page?.docId);
       const canvas = document.getElementById('main-pdf-canvas');
-      const wrapper = document.getElementById('canvas-wrapper');
       const loader = document.getElementById('canvas-loader');
-      const viewerContainer = document.getElementById('main-viewer-container');
 
-      if (!doc || !canvas || !wrapper) return;
+      if (!doc || !canvas) return;
       if (currentMainRenderTask) { currentMainRenderTask.cancel().catch(()=>{}); currentMainRenderTask = null; }
       loader.classList.remove('hidden');
 
       try {
         const pdfPage = await doc.pdfjsDoc.getPage(page.originalPageIndex + 1);
         const rotation = normalizeRotation(page.baseRotation + page.userRotation);
-        const baseViewport = pdfPage.getViewport({ scale: 1, rotation });
-        let scale = state.zoom;
-
-        const btnFit = document.getElementById('btn-toggle-fit');
-        if (state.fitMode === 'fit') {
-          const availWidth = viewerContainer.clientWidth - 64;
-          const availHeight = viewerContainer.clientHeight - 64;
-          scale = Math.min(availWidth / baseViewport.width, availHeight / baseViewport.height, 2.5);
-          state.zoom = scale; 
-          btnFit.className = 'ml-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400';
-        } else {
-          btnFit.className = 'ml-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300';
-        }
-
-        document.getElementById('zoom-text').textContent = `%${Math.round(scale * 100)}`;
-        const viewport = pdfPage.getViewport({ scale, rotation });
-        const outputScale = window.devicePixelRatio || 1;
-        canvas.width = Math.ceil(viewport.width * outputScale);
-        canvas.height = Math.ceil(viewport.height * outputScale);
-        canvas.style.width = `${Math.ceil(viewport.width)}px`;
-        canvas.style.height = `${Math.ceil(viewport.height)}px`;
+        const viewport = pdfPage.getViewport({ scale: state.zoom, rotation });
+        
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
 
         const ctx = canvas.getContext('2d');
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-        currentMainRenderTask = pdfPage.render({ canvasContext: ctx, viewport, transform: outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : undefined });
+        currentMainRenderTask = pdfPage.render({ canvasContext: ctx, viewport });
         await currentMainRenderTask.promise;
         currentMainRenderTask = null;
-
-        renderLiveOverlays(ctx, viewport.width * outputScale, viewport.height * outputScale, outputScale);
-        if(state.selectedTool?.id === 'crop') {
-           let p = state.pages.find(x => x.id === state.activePageId);
-           if(p && !p.cropBox) p.cropBox = { px: 0.25, py: 0.25, pw: 0.5, ph: 0.5 };
-           drawCropOverlay();
-        } else {
-           document.getElementById('crop-overlay').classList.add('hidden');
-        }
       } catch (err) {
          if(err.name !== 'RenderingCancelledException') console.error(err);
       } finally {
          loader.classList.add('hidden');
-      }
-    }
-
-    function renderLiveOverlays(ctx, w, h, scale) {
-      if (state.selectedTool?.id === 'watermark') {
-        const wm = state.watermark; ctx.save(); ctx.font = `bold ${wm.fontSize * scale}px sans-serif`; ctx.fillStyle = wm.color; ctx.globalAlpha = wm.opacity; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        let x = w/2, y = h/2;
-        if(wm.position.includes('top')) y = h*0.15; if(wm.position.includes('bottom')) y = h*0.85; if(wm.position.includes('left')) x = w*0.2; if(wm.position.includes('right')) x = w*0.8;
-        ctx.translate(x, y); ctx.rotate((wm.rotation*Math.PI)/180); ctx.fillText(wm.text, 0, 0); ctx.restore();
-      } else if (state.selectedTool?.id === 'page-number') {
-        const pn = state.pageNumber; ctx.save(); ctx.font = `${pn.fontSize * scale}px sans-serif`; ctx.fillStyle = pn.color; ctx.textAlign = "center";
-        let text = pn.format === 'page-of-total' ? `Sayfa 1 / ${state.pages.length}` : '1';
-        ctx.fillText(text, w/2, h - (pn.offsetY * scale)); ctx.restore();
       }
     }
   </script>
