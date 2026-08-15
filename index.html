@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Utility Pro</title>
+  <title>PDF Utility Pro & AI Studio</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -51,7 +51,7 @@
         <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-indigo-500/20 shrink-0">📄</div>
         <div>
           <h1 class="font-bold text-base tracking-tight leading-none">PDF Utility Pro</h1>
-          <span class="text-xs text-slate-500 dark:text-slate-400">Gemini 3.7 Flash Destekli</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400">Gemini 3.7 Flash AI Studio</span>
         </div>
       </div>
       
@@ -74,8 +74,8 @@
     </div>
 
     <div class="flex items-center gap-2 ml-auto">
-      <button id="btn-toggle-ai" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300 shadow-sm hover:bg-indigo-100 dark:hover:bg-indigo-800 transition-colors border border-indigo-200 dark:border-indigo-800/50">
-        🤖 AI Asistanı Özeti
+      <button id="btn-toggle-ai" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-md shadow-indigo-600/20 hover:bg-indigo-700 transition-all border border-indigo-500">
+        ✨ AI Akıllı Özet
       </button>
       <div class="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1"></div>
       <button id="btn-theme-toggle" class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Tema Değiştir">
@@ -91,7 +91,7 @@
       <div id="drop-zone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 bg-white dark:bg-slate-900 rounded-2xl p-8 md:p-10 text-center cursor-pointer transition-all group shadow-sm hover:shadow-md">
         <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-3xl group-hover:scale-105 transition-transform">📂</div>
         <h3 class="text-lg font-semibold mb-1">PDF veya Görsel dosyalarınızı buraya bırakın</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">Tüm işlemler sunucuya aktarılmadan tamamen tarayıcınızda güvenle işlenir[cite: 1].</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">Dosyaları ortadan yükleyebilir, dilediğiniz gibi düzenleyebilir ve yapay zeka ile anında özetletebilirsiniz[cite: 1].</p>
       </div>
       <div class="flex flex-wrap items-center gap-2 md:gap-3 border-b border-slate-200 dark:border-slate-800 pb-4" id="category-tabs"></div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 pb-8" id="tools-grid"></div>
@@ -100,7 +100,7 @@
     <div id="view-empty-tool" class="hidden flex-1 flex items-center justify-center p-8">
       <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center max-w-md w-full shadow-lg">
         <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-3xl">📥</div>
-        <h3 id="empty-tool-title" class="text-lg font-bold mb-2">Bu Araç İçin Dosya Yükleyin</h3>
+        <h3 id="empty-tool-title" class="text-lg font-bold mb-2">Dosya Yükleyin</h3>
         <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Devam etmek için bilgisayarınızdan dosya seçin.</p>
         <button id="btn-empty-upload" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md transition-colors">Dosya Seç</button>
       </div>
@@ -253,19 +253,20 @@
         </div>
       </aside>
 
-      <!-- PROFESYONEL VE ŞIK YAPAY ZEKA ÖZET PANELİ -->
-      <aside id="ai-sidebar-panel" class="hidden w-96 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col shrink-0 z-30 transition-all shadow-2xl">
+      <!-- ŞIK VE PROFESYONEL AI ÖZET PANELİ (HTML HEADER ETİKETLERİ İLE DESTEKLENİR) -->
+      <aside id="ai-sidebar-panel" class="hidden w-[420px] border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col shrink-0 z-30 transition-all shadow-2xl">
         <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-indigo-50/80 dark:bg-indigo-950/40 backdrop-blur-sm">
-          <h3 class="font-extrabold text-sm text-indigo-700 dark:text-indigo-300 flex items-center gap-2 tracking-wide">
-            ✨ Gemini 3.7 Pro Özet
-          </h3>
+          <div class="flex items-center gap-2">
+            <span class="text-lg">✨</span>
+            <h3 class="font-extrabold text-sm text-indigo-700 dark:text-indigo-300 tracking-wide">Gemini 3.7 Pro Akıllı Özet</h3>
+          </div>
           <button id="btn-close-ai" class="text-slate-400 hover:text-rose-500 font-bold px-2.5 py-1 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors">✕</button>
         </div>
         <div class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col">
             <div id="ai-result-container" class="flex-1 flex flex-col gap-3">
                 <div class="text-center text-xs text-slate-400 my-auto py-10 flex flex-col items-center gap-2">
                     <div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-500 flex items-center justify-center text-lg shadow-inner">⚡</div>
-                    <span>Belge yüklendiğinde otomatik olarak profesyonel yönetici özeti oluşturulur.</span>
+                    <span>Belge yüklendiğinde otomatik olarak profesyonel özet raporu oluşturulur.</span>
                 </div>
             </div>
         </div>
@@ -275,7 +276,7 @@
   </main>
 
   <footer class="h-10 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 flex items-center justify-between text-xs text-slate-500 shrink-0 z-50">
-    <span>Taha Şaprak</span><span>PDF Utility Pro v3.7 (AI Optimized)</span>
+    <span>Taha Şaprak</span><span>PDF Utility Pro v3.7 (AI Studio Edition)</span>
   </footer>
 
   <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
@@ -523,19 +524,25 @@
         }
     }
 
-    // OTOMATİK AI ÖZET ÇALIŞTIRMA FONKSİYONU
+    // GÜNCELLENMİŞ HTML HEADER ETİKETLERİ DESTEKLEYEN AI ÖZET OLUŞTURUCU
     async function triggerAiSummaryGeneration() {
         const resultContainer = document.getElementById('ai-result-container');
         
         if (state.pages.length === 0) {
-            resultContainer.innerHTML = '<div class="text-center text-xs text-slate-400 my-auto py-10">Önce bir belge yüklemelisiniz.</div>';
+            resultContainer.innerHTML = `
+                <div class="text-center text-xs text-slate-400 my-auto py-10 flex flex-col items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-500 flex items-center justify-center text-xl shadow-inner">📂</div>
+                    <p class="font-medium">Lütfen ana sayfadan veya üst menüden bir PDF dosyası yükleyin.</p>
+                    <button onclick="document.getElementById('file-input').click()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold shadow hover:bg-indigo-700 transition">Dosya Seç</button>
+                </div>
+            `;
             return;
         }
         
         resultContainer.innerHTML = `
-            <div class="text-xs text-slate-500 text-center py-12 flex flex-col items-center gap-3">
-                <div class="spinner border-t-indigo-500 w-8 h-8"></div>
-                <span class="font-medium">Gemini 3.7 Pro belgeyi analiz ediyor...</span>
+            <div class="text-xs text-slate-500 text-center py-16 flex flex-col items-center gap-3">
+                <div class="spinner border-t-indigo-500 w-10 h-10"></div>
+                <span class="font-bold text-slate-700 dark:text-slate-200">Gemini 3.7 Pro belgenizi analiz ediyor...</span>
             </div>
         `;
         
@@ -560,32 +567,32 @@
             const data = await response.json();
             const rawSummary = data.summary || data.result || 'Özet oluşturulamadı.';
 
-            // Çirkin kalıpları ve düzensizlikleri temizleyip profesyonel HTML'e dönüştür
+            // HTML Header ve Madde Ayrıştırma Optimizasyonu
             let formattedHtml = '';
             const lines = rawSummary.split('\n');
             for (let line of lines) {
-                let cleanLine = line.trim().replace(/^[\*\-\•\#]\s*/, '');
-                if (cleanLine.length > 0) {
-                    if (line.trim().startsWith('*') || line.trim().startsWith('-') || line.trim().startsWith('•') || line.trim().startsWith('1')) {
-                        formattedHtml += `<li class="leading-relaxed text-slate-700 dark:text-slate-200">${cleanLine}</li>`;
-                    } else {
-                        formattedHtml += `<p class="font-semibold text-indigo-900 dark:text-indigo-200 mt-2">${cleanLine}</p>`;
-                    }
+                let cleanLine = line.trim();
+                if (cleanLine.length === 0) continue;
+
+                // Eğer yapay zeka başlık veya madde verdiyse şık HTML taglerine dönüştür
+                if (cleanLine.startsWith('# ') || cleanLine.startsWith('**') && cleanLine.endsWith('**') && cleanLine.length < 50) {
+                    let titleText = cleanLine.replace(/^#+\s*/, '').replace(/\*\*/g, '');
+                    formattedHtml += `<h4 class="text-sm font-bold text-indigo-700 dark:text-indigo-400 mt-4 mb-1.5 flex items-center gap-1.5 border-b border-indigo-100 dark:border-indigo-900 pb-1">📌 ${titleText}</h4>`;
+                } else if (cleanLine.startsWith('* ') || cleanLine.startsWith('- ') || cleanLine.startsWith('• ')) {
+                    let bulletText = cleanLine.replace(/^[\*\-\•]\s*/, '');
+                    formattedHtml += `<li class="leading-relaxed text-slate-700 dark:text-slate-200 ml-4">${bulletText}</li>`;
+                } else {
+                    formattedHtml += `<p class="leading-relaxed text-slate-700 dark:text-slate-300 my-1.5">${cleanLine}</p>`;
                 }
-            }
-            if(!formattedHtml.includes('<li')) {
-                formattedHtml = `<p class="leading-relaxed text-slate-700 dark:text-slate-200">${rawSummary}</p>`;
-            } else {
-                formattedHtml = `<ul class="list-disc pl-4 space-y-2 text-xs">${formattedHtml}</ul>`;
             }
 
             resultContainer.innerHTML = `
-                <div class="bg-gradient-to-br from-indigo-50/70 to-slate-50 dark:from-indigo-950/30 dark:to-slate-900 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-sm space-y-3">
-                    <div class="flex items-center justify-between border-b border-indigo-100 dark:border-indigo-900/50 pb-2">
-                        <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">⚡ Yönetici Özeti</span>
-                        <button onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.innerText); showToast('Özet panoya kopyalandı! ✅');" class="text-[11px] bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-indigo-50 transition">Kopyala</button>
+                <div class="bg-gradient-to-br from-indigo-50/70 to-slate-50 dark:from-indigo-950/30 dark:to-slate-900 p-5 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-indigo-200 dark:border-indigo-800 pb-3">
+                        <span class="text-xs font-extrabold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">⚡ Yönetici Özeti Raporu</span>
+                        <button onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.innerText); showToast('Özet panoya kopyalandı! ✅');" class="text-xs bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-indigo-50 transition shadow-sm font-semibold">Kopyala</button>
                     </div>
-                    <div class="font-sans text-xs space-y-2">${formattedHtml}</div>
+                    <div class="font-sans text-xs space-y-2 max-h-[calc(100vh-220px)] overflow-y-auto pr-1">${formattedHtml}</div>
                 </div>
             `;
         } catch (error) {
@@ -594,7 +601,7 @@
                 <div class="bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 p-4 rounded-xl border border-amber-200 dark:border-amber-800 text-xs space-y-2 shadow-sm">
                     <strong>💡 Sunucu / Vercel Yapılandırma Notu[cite: 1]</strong>
                     <p>Metin başarıyla tarandı ancak canlı özet için Vercel üzerinde <code>/api/summarize</code> fonksiyonunun aktif olması gerekiyor[cite: 1].</p>
-                    <div class="font-mono bg-white dark:bg-slate-900 p-2 rounded border text-[10px] max-h-24 overflow-y-auto">${extractedText.substring(0, 250)}...</div>
+                    <div class="font-mono bg-white dark:bg-slate-900 p-2 rounded border text-[10px] max-h-32 overflow-y-auto">${extractedText.substring(0, 300)}...</div>
                 </div>
             `;
         }
@@ -608,7 +615,7 @@
       document.getElementById('btn-empty-upload').addEventListener('click', () => document.getElementById('file-input').click());
       document.getElementById('btn-add-more-files').addEventListener('click', () => document.getElementById('file-input').click());
       
-      // Sağ üstteki AI ASİSTANI BUTONU TIKLANDIĞINDA OTOMATİK ÖZET ÇIKAR
+      // SAĞ ÜSTTEKİ AI BUTONU: HER DURUMDA AKTİF VE ÇALIŞIR
       document.getElementById('btn-toggle-ai').addEventListener('click', () => {
           const panel = document.getElementById('ai-sidebar-panel');
           const rightPanel = document.getElementById('right-settings-panel');
@@ -617,7 +624,7 @@
               panel.classList.add('flex');
               rightPanel.classList.add('hidden');
               rightPanel.classList.remove('flex');
-              triggerAiSummaryGeneration(); // Otomatik tetikle
+              triggerAiSummaryGeneration(); // Otomatik özet çıkar
           } else {
               panel.classList.add('hidden');
               panel.classList.remove('flex');
@@ -953,8 +960,13 @@
       }
       if (added > 0) { 
           showToast(`${added} dosya eklendi.`); 
+          // Eğer araç seçili değilse otomatik olarak 'split' veya ilk aracı aktif yapıp çalışma alanına atalım
+          if(!state.selectedTool) {
+              state.selectedTool = TOOLS[0]; // Varsayılan ilk araç
+          }
           renderViews(); 
-          // Eğer AI paneli açıksa dosya yüklendiği an özeti otomatik çıkar
+          
+          // Eğer sağdaki AI paneli açık ise otomatik özeti tetikle
           const aiPanel = document.getElementById('ai-sidebar-panel');
           if (aiPanel && !aiPanel.classList.contains('hidden')) {
               triggerAiSummaryGeneration();
