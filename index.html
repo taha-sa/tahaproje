@@ -75,7 +75,7 @@
 
     <div class="flex items-center gap-2 ml-auto">
       <button id="btn-toggle-ai" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300 shadow-sm hover:bg-indigo-100 dark:hover:bg-indigo-800 transition-colors border border-indigo-200 dark:border-indigo-800/50">
-        🤖 AI Asistanı (3.7)
+        🤖 AI Asistanı Özeti
       </button>
       <div class="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1"></div>
       <button id="btn-theme-toggle" class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Tema Değiştir">
@@ -91,7 +91,7 @@
       <div id="drop-zone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 bg-white dark:bg-slate-900 rounded-2xl p-8 md:p-10 text-center cursor-pointer transition-all group shadow-sm hover:shadow-md">
         <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-3xl group-hover:scale-105 transition-transform">📂</div>
         <h3 class="text-lg font-semibold mb-1">PDF veya Görsel dosyalarınızı buraya bırakın</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">Tüm işlemler sunucuya aktarılmadan tamamen tarayıcınızda güvenle işlenir.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">Tüm işlemler sunucuya aktarılmadan tamamen tarayıcınızda güvenle işlenir[cite: 1].</p>
       </div>
       <div class="flex flex-wrap items-center gap-2 md:gap-3 border-b border-slate-200 dark:border-slate-800 pb-4" id="category-tabs"></div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 pb-8" id="tools-grid"></div>
@@ -253,19 +253,19 @@
         </div>
       </aside>
 
-      <aside id="ai-sidebar-panel" class="hidden w-80 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col shrink-0 z-30 transition-all shadow-xl">
-        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-indigo-50 dark:bg-indigo-950/20">
-          <h3 class="font-bold text-sm text-indigo-700 dark:text-indigo-400 flex items-center gap-2">🤖 Yapay Zeka Asistanı (3.7 Flash)</h3>
-          <button id="btn-close-ai" class="text-slate-500 hover:text-rose-500 font-bold px-2 py-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">×</button>
+      <!-- PROFESYONEL VE ŞIK YAPAY ZEKA ÖZET PANELİ -->
+      <aside id="ai-sidebar-panel" class="hidden w-96 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col shrink-0 z-30 transition-all shadow-2xl">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-indigo-50/80 dark:bg-indigo-950/40 backdrop-blur-sm">
+          <h3 class="font-extrabold text-sm text-indigo-700 dark:text-indigo-300 flex items-center gap-2 tracking-wide">
+            ✨ Gemini 3.7 Pro Özet
+          </h3>
+          <button id="btn-close-ai" class="text-slate-400 hover:text-rose-500 font-bold px-2.5 py-1 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors">✕</button>
         </div>
-        <div class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col h-full">
-            <p class="text-[13px] text-slate-500 dark:text-slate-400 mb-2 leading-relaxed">Bu belgeyi Gemini 3.7 Flash ile analiz edin. Metinler güvenli köprü (serverless proxy) üzerinden işlenir[cite: 1].</p>
-            <button id="btn-ai-summarize" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 text-sm">
-                ✨ Yapay Zeka Özeti Çıkar
-            </button>
-            <div id="ai-result-container" class="mt-4 flex-1 flex flex-col gap-3">
-                <div class="text-center text-xs text-slate-400 mt-10">
-                    Özetleme işlemi için hazır.
+        <div class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col">
+            <div id="ai-result-container" class="flex-1 flex flex-col gap-3">
+                <div class="text-center text-xs text-slate-400 my-auto py-10 flex flex-col items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-500 flex items-center justify-center text-lg shadow-inner">⚡</div>
+                    <span>Belge yüklendiğinde otomatik olarak profesyonel yönetici özeti oluşturulur.</span>
                 </div>
             </div>
         </div>
@@ -275,7 +275,7 @@
   </main>
 
   <footer class="h-10 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 flex items-center justify-between text-xs text-slate-500 shrink-0 z-50">
-    <span>Taha Şaprak</span><span>PDF Utility Pro v3.7 (Gemini Flash Optimized)</span>
+    <span>Taha Şaprak</span><span>PDF Utility Pro v3.7 (AI Optimized)</span>
   </footer>
 
   <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
@@ -523,6 +523,83 @@
         }
     }
 
+    // OTOMATİK AI ÖZET ÇALIŞTIRMA FONKSİYONU
+    async function triggerAiSummaryGeneration() {
+        const resultContainer = document.getElementById('ai-result-container');
+        
+        if (state.pages.length === 0) {
+            resultContainer.innerHTML = '<div class="text-center text-xs text-slate-400 my-auto py-10">Önce bir belge yüklemelisiniz.</div>';
+            return;
+        }
+        
+        resultContainer.innerHTML = `
+            <div class="text-xs text-slate-500 text-center py-12 flex flex-col items-center gap-3">
+                <div class="spinner border-t-indigo-500 w-8 h-8"></div>
+                <span class="font-medium">Gemini 3.7 Pro belgeyi analiz ediyor...</span>
+            </div>
+        `;
+        
+        const extractedText = await extractAllTextFromCurrentPDF();
+        
+        if (!extractedText || extractedText.length === 0) {
+            resultContainer.innerHTML = '<div class="text-xs text-rose-500 text-center p-4 bg-rose-50 dark:bg-rose-950/30 rounded-xl border border-rose-200">Belgeden metin okunamadı. Taranmış resim tabanlı PDF olabilir.</div>';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/summarize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: extractedText })
+            });
+
+            if (!response.ok) {
+                throw new Error('Sunucu yanıt vermedi.');
+            }
+
+            const data = await response.json();
+            const rawSummary = data.summary || data.result || 'Özet oluşturulamadı.';
+
+            // Çirkin kalıpları ve düzensizlikleri temizleyip profesyonel HTML'e dönüştür
+            let formattedHtml = '';
+            const lines = rawSummary.split('\n');
+            for (let line of lines) {
+                let cleanLine = line.trim().replace(/^[\*\-\•\#]\s*/, '');
+                if (cleanLine.length > 0) {
+                    if (line.trim().startsWith('*') || line.trim().startsWith('-') || line.trim().startsWith('•') || line.trim().startsWith('1')) {
+                        formattedHtml += `<li class="leading-relaxed text-slate-700 dark:text-slate-200">${cleanLine}</li>`;
+                    } else {
+                        formattedHtml += `<p class="font-semibold text-indigo-900 dark:text-indigo-200 mt-2">${cleanLine}</p>`;
+                    }
+                }
+            }
+            if(!formattedHtml.includes('<li')) {
+                formattedHtml = `<p class="leading-relaxed text-slate-700 dark:text-slate-200">${rawSummary}</p>`;
+            } else {
+                formattedHtml = `<ul class="list-disc pl-4 space-y-2 text-xs">${formattedHtml}</ul>`;
+            }
+
+            resultContainer.innerHTML = `
+                <div class="bg-gradient-to-br from-indigo-50/70 to-slate-50 dark:from-indigo-950/30 dark:to-slate-900 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-indigo-100 dark:border-indigo-900/50 pb-2">
+                        <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">⚡ Yönetici Özeti</span>
+                        <button onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.innerText); showToast('Özet panoya kopyalandı! ✅');" class="text-[11px] bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-indigo-50 transition">Kopyala</button>
+                    </div>
+                    <div class="font-sans text-xs space-y-2">${formattedHtml}</div>
+                </div>
+            `;
+        } catch (error) {
+            console.warn("API köprüsü çağrılamadı:", error);
+            resultContainer.innerHTML = `
+                <div class="bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 p-4 rounded-xl border border-amber-200 dark:border-amber-800 text-xs space-y-2 shadow-sm">
+                    <strong>💡 Sunucu / Vercel Yapılandırma Notu[cite: 1]</strong>
+                    <p>Metin başarıyla tarandı ancak canlı özet için Vercel üzerinde <code>/api/summarize</code> fonksiyonunun aktif olması gerekiyor[cite: 1].</p>
+                    <div class="font-mono bg-white dark:bg-slate-900 p-2 rounded border text-[10px] max-h-24 overflow-y-auto">${extractedText.substring(0, 250)}...</div>
+                </div>
+            `;
+        }
+    }
+
     function initEventListeners() {
       document.getElementById('btn-theme-toggle').addEventListener('click', () => { state.theme = state.theme === 'light' ? 'dark' : 'light'; updateTheme(); });
       document.getElementById('btn-home-logo').addEventListener('click', () => { state.selectedTool = null; renderViews(); });
@@ -531,6 +608,7 @@
       document.getElementById('btn-empty-upload').addEventListener('click', () => document.getElementById('file-input').click());
       document.getElementById('btn-add-more-files').addEventListener('click', () => document.getElementById('file-input').click());
       
+      // Sağ üstteki AI ASİSTANI BUTONU TIKLANDIĞINDA OTOMATİK ÖZET ÇIKAR
       document.getElementById('btn-toggle-ai').addEventListener('click', () => {
           const panel = document.getElementById('ai-sidebar-panel');
           const rightPanel = document.getElementById('right-settings-panel');
@@ -539,76 +617,17 @@
               panel.classList.add('flex');
               rightPanel.classList.add('hidden');
               rightPanel.classList.remove('flex');
+              triggerAiSummaryGeneration(); // Otomatik tetikle
           } else {
               panel.classList.add('hidden');
               panel.classList.remove('flex');
-              if (['watermark', 'page-number'].includes(state.selectedTool?.id)) {
-                  rightPanel.classList.remove('hidden');
-                  rightPanel.classList.add('flex');
-              }
           }
       });
+
       document.getElementById('btn-close-ai').addEventListener('click', () => {
           const panel = document.getElementById('ai-sidebar-panel');
           panel.classList.add('hidden');
           panel.classList.remove('flex');
-      });
-
-      // Gemini 3.7 Flash Destekli Serverless Proxy Entegrasyonu
-      document.getElementById('btn-ai-summarize').addEventListener('click', async () => {
-          const btn = document.getElementById('btn-ai-summarize');
-          const resultContainer = document.getElementById('ai-result-container');
-          
-          if (state.pages.length === 0) {
-              showToast('Lütfen önce bir belge yükleyin.', 'error');
-              return;
-          }
-          
-          btn.disabled = true;
-          btn.innerHTML = '<div class="spinner w-4 h-4 border-2 border-t-white inline-block"></div> Analiz Ediliyor...';
-          resultContainer.innerHTML = '<div class="text-xs text-slate-500 text-center py-6 flex flex-col items-center gap-3"><div class="spinner border-t-indigo-500 w-8 h-8"></div> Belge güvenli köprü üzerinden Gemini 3.7 Flash\'a gönderiliyor...</div>';
-          
-          const extractedText = await extractAllTextFromCurrentPDF();
-          
-          if (!extractedText || extractedText.length === 0) {
-              resultContainer.innerHTML = '<div class="text-xs text-rose-500 text-center p-4 bg-rose-50 rounded-xl border border-rose-200">Belgeden metin okunamadı. Taranmış görsel olabilir[cite: 1].</div>';
-              btn.disabled = false;
-              btn.innerHTML = '✨ Yapay Zeka Özeti Çıkar';
-              return;
-          }
-
-          try {
-              const response = await fetch('/api/summarize', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ text: extractedText })
-              });
-
-              if (!response.ok) {
-                  throw new Error('Sunucu yanıt vermedi veya API anahtarı yapılandırılmadı.');
-              }
-
-              const data = await response.json();
-              
-              resultContainer.innerHTML = `
-                  <div class="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 p-3 rounded-xl border border-indigo-200 dark:border-indigo-800 text-xs shadow-sm space-y-2">
-                      <strong class="flex items-center gap-1.5">🤖 Gemini 3.7 Flash Analizi</strong>
-                      <div class="text-slate-700 dark:text-slate-200 font-sans leading-relaxed whitespace-pre-wrap">${data.summary || data.result || 'Özet oluşturuldu.'}</div>
-                  </div>
-              `;
-          } catch (error) {
-              console.warn("API köprüsü çağrılamadı (Canlı sunucu/Vercel ortamı bekleniyor):", error);
-              resultContainer.innerHTML = `
-                  <div class="bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 p-3 rounded-xl border border-amber-200 dark:border-amber-800 text-xs shadow-sm space-y-2">
-                      <strong>💡 Yerel Mimari Bilgilendirmesi</strong>[cite: 1]
-                      <p>Metin başarıyla tarandı ancak canlı test için projenin Vercel'e yüklenmesi ve <code>/api/summarize</code> serverless fonksiyonunun aktif olması gerekiyor[cite: 1].</p>
-                      <div class="font-mono bg-white dark:bg-slate-900 p-2 rounded border text-[11px] max-h-32 overflow-y-auto">${extractedText.substring(0, 300)}...</div>
-                  </div>
-              `;
-          } finally {
-              btn.disabled = false;
-              btn.innerHTML = '✨ Yapay Zeka Özeti Çıkar';
-          }
       });
 
       document.getElementById('btn-clear-workspace').addEventListener('click', () => {
@@ -932,7 +951,15 @@
           } catch(e) { showToast(`Okuma hatası: ${file.name}`, 'error'); }
         }
       }
-      if (added > 0) { showToast(`${added} dosya eklendi.`); renderViews(); }
+      if (added > 0) { 
+          showToast(`${added} dosya eklendi.`); 
+          renderViews(); 
+          // Eğer AI paneli açıksa dosya yüklendiği an özeti otomatik çıkar
+          const aiPanel = document.getElementById('ai-sidebar-panel');
+          if (aiPanel && !aiPanel.classList.contains('hidden')) {
+              triggerAiSummaryGeneration();
+          }
+      }
     }
 
     function renderWorkspace() {
